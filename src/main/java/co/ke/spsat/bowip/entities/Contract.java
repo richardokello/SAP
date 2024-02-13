@@ -1,0 +1,27 @@
+package co.ke.spsat.bowip.entities;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.Date;
+@Entity
+@Data
+@Table(name = "CONTRACT")
+public class Contract {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long contractId;
+    private Date startDate;
+    private Date endDate;
+    private String terms;
+    private double agreedPrice;
+    @JoinColumn( name = "SUPPLIERS_ID", referencedColumnName = "CONTRACT_ID")
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Supplier supplier;
+
+}

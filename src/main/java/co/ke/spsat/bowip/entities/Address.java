@@ -19,17 +19,31 @@ public class Address {
     @Column(name = "STREET")
     @NonNull
     private String street;
-    @Column(name = "CITY")
-    @NonNull
-    private String city;
+
     @Column(name = "STATE")
     @NonNull
     private String state;
+
+
+
+    @Column(name = "ADDRESS_LINE1", nullable = false)
+    private String addressLine1;
+
+    @Column(name = "ADDRESS_LINE2")
+    private String addressLine2;
+
+    @Column(name = "CITY", nullable = false)
+    private String city;
+
+
     @Column(name = "POSTAL_CODE")
-    @NonNull
     private String postalCode;
     @Column(name = "COUNTYR")
-    @NonNull
+    @Pattern(regexp = "[A-Z]{2}", message = "2-letter ISO country code required")
+    @lombok.NonNull
     private String country;
+
+    private String phone;
+
 
 }

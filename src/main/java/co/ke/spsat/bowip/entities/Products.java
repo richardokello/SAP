@@ -1,8 +1,11 @@
 package co.ke.spsat.bowip.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
@@ -35,19 +38,27 @@ public class Products {
     private String usageInstructions;
     @Column(name = "WEIGHT")
     private  String weight;
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "CATEGORYID", referencedColumnName = "categoryID", insertable = false,updatable = false)
     private Categories categoryId;
     @Column(name = "CATEGORYID")
     private Long categoriesId;
     @Column(name = "ITEM_LENGTH")
     private String lenth;
+    @NonNull
     @Column(name = "PRODUCT_CODE")
     private String productCode;
+    @NonNull
+    @Column()
     private String image;
     @Column(name = "PRICE")
     private BigDecimal price;
     private Integer quantityInStock;
+    @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Column(name = "BATCH_ID", nullable = false)
+    @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID", insertable = false,updatable = false)
     private List<Batch> batches;
 
     @Column(name = "STATUS")

@@ -6,14 +6,18 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 
 @Entity @Data
 @Table(name = "CART_ITEM")
 public class CartItem {
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "CART_ITEM_SEQ")
+    @SequenceGenerator(name = "CART_ITEM_SEQ", sequenceName = "\"Cart_Item_Seq\"",allocationSize = 1)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CARTITEM_ID")
+    @NonNull
     private Long id;
     @JoinColumn( name = "CART", referencedColumnName = "CART_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
@@ -32,4 +36,7 @@ public class CartItem {
     @Nonnull
     private BigDecimal totalAmount;
 
+    public CartItem() {
+
+    }
 }

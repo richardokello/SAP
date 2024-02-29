@@ -20,17 +20,17 @@ public class Order {
     @Column(name = "ORDERS_ID")
     @NonNull
     private Long orderId;
-    @JoinColumn( name = "PRODUCTS_ID", referencedColumnName = "PRODUCTS_ID")
+    @JoinColumn( name = "Customers", referencedColumnName = "CUSTOMER_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "PRODUCTS_ID", nullable = false)
+    //@Column(name = "PRODUCTS_ID", nullable = false)
     private Customers customer;
-    @JoinColumn( name = "ORDERITEM", referencedColumnName = "PRODUCTS_ID")
+    @JoinColumn( name = "ORDER_ITEM")//, referencedColumnName = "ORDER_ITEM_ID")
     @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "PRODUCTS_ID", nullable = false)
+    //@Column(name = "PRODUCTS_ID", nullable = false)
     private List<OrderItem> orderItems;
     @Column(name = "ORDER_DATE")
     private Date orderDate;
@@ -43,8 +43,12 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "SHOPPING_ID", nullable = false)
+   // @Column(name = "SHOPPING_ID", nullable = false)
     private ShoppingCart shoppingCart;
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Column(name = "ORDER_NO", nullable = false)
+    private String OrderNO;
 
     public Order() {
 

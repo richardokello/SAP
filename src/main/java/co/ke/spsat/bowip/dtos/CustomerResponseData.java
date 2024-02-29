@@ -1,2 +1,4 @@
-package co.ke.spsat.bowip.dtos;public class CustomerResponseData {
+package co.ke.spsat.bowip.dtos;
+
+public class CustomerResponseData {
 }

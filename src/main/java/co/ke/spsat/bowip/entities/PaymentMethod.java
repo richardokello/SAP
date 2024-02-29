@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 public class PaymentMethod {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO )
+    @Column(name = "METHOD_ID")
     private Long methodsId;
     @Nonnull
     @Column(name = "METHODNAME")

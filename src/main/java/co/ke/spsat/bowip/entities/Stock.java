@@ -16,21 +16,21 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "PRODUCT_SEQ")
     @SequenceGenerator(name = "PRODUCT_SEQ", sequenceName = "\"Product_Seq\"",allocationSize = 1)
     @Id
-    @Column(name = "PRODUCT_ID")
+    @Column(name = "STOCK_ID")
     @NonNull
     private String stockId;
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "PRODUCT_ID", nullable = false)
-    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", insertable = false,updatable = false)
+  //  @Column(name = "PRODUCT_ID", nullable = false)
+    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     private Products productId; // Reference to the corresponding product
     private int quantity;
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "LOCATIONID", nullable = false)
-    @JoinColumn(name = "LOCATIONID", referencedColumnName = "LOCATION_ID", insertable = false,updatable = false)
+    //@Column(name = "LOCATIONID", nullable = false)
+    @JoinColumn(name = "LOCATIONID", referencedColumnName = "LOCATION_ID")
     private Location location;
     private int minStockLevel;
     private int maxStockLevel;
@@ -39,8 +39,8 @@ public class Stock {
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "BATCH_ID", nullable = false)
-    @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID", insertable = false,updatable = false)
+    //@Column(name = "BATCH_ID", nullable = false)
+    @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID")
     private Batch batchNumber;
 
     public Stock() {

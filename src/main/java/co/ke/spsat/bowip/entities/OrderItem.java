@@ -15,20 +15,24 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;
-    @JoinColumn( name = "ORDER_ID", referencedColumnName = "ORDERS_ID")
+    @JoinColumn( name = "ORDER_ITEM_ID", referencedColumnName = "ORDERS_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "ORDER_ID", nullable = false)
+  //  @Column(name = "ORDER_ID", nullable = false)
     private Order order;
-    @JoinColumn( name = "PRODUCTS_ID", referencedColumnName = "PRODUCTS_ID")
+    @JoinColumn( name = "PRODUCTS_ID", referencedColumnName = "PRODUCT_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "PRODUCTS_ID", nullable = false)
-    private Products product;
-    @Column(name = "QUANTITY")
-    @Nonnull
+   // @Column(name = "PRODUCTS_ID", nullable = false)
+    private Products productNO;
+    @JoinColumn( name = "ORDER_NO", referencedColumnName = "ORDERS_ID")
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@Column(name = "ORDER_NO", nullable = false)
+    private Order orderNo;
     private int quantity;
     @Column(name = "UNITY_PRICE")
     @Nonnull

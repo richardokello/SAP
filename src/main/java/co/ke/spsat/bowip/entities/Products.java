@@ -2,6 +2,7 @@ package co.ke.spsat.bowip.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.OnDelete;
@@ -17,6 +18,7 @@ import java.util.List;
 //@FilterDef(name = "deletedProductsFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 @Filter(name = "deletedProductsFilter", condition = "deleted = :isDeleted")
 @Entity
+@AllArgsConstructor
 public class Products {
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "PRODUCT_SEQ")
     @SequenceGenerator(name = "PRODUCT_SEQ", sequenceName = "\"Product_Seq\"",allocationSize = 1)
@@ -26,7 +28,7 @@ public class Products {
     private  Long productId;
     @Column(name = "PRODUCT_NAME")
     private  String productName;
-    @Column(name = "BBRAND")
+    @Column(name = "BRAND")
     private  String brand;
     @Column(name = "DESCRIPTION")
     private  String description;
@@ -38,13 +40,14 @@ public class Products {
     private String usageInstructions;
     @Column(name = "WEIGHT")
     private  String weight;
-    @ManyToOne
-    @JoinColumn(name = "CATEGORYID", referencedColumnName = "categoryID", insertable = false,updatable = false)
-    private Categories categoryId;
-    @Column(name = "CATEGORYID")
-    private Long categoriesId;
+
+    @JoinColumn(name = "CATEGORYID", referencedColumnName = "categoryID")
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ProductCategory categoryId;
     @Column(name = "ITEM_LENGTH")
-    private String lenth;
+    private String length;
     @NonNull
     @Column(name = "PRODUCT_CODE")
     private String productCode;
@@ -54,16 +57,21 @@ public class Products {
     @Column(name = "PRICE")
     private BigDecimal price;
     private Integer quantityInStock;
-    @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "BATCH_ID", nullable = false)
-    @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID", insertable = false,updatable = false)
     private List<Batch> batches;
 
+    private String SKU;
     @Column(name = "STATUS")
     private  String status="Active";
     private  Boolean deleted=Boolean.FALSE;
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "SUPPLIER_ID")//, referencedColumnName = "BATCH_ID")
+    private Supplier supplier;
 
     public Products(@NonNull Long productId,
                     String productName,
@@ -81,7 +89,7 @@ public class Products {
         this.size = size;
         this.usageInstructions = usageInstructions;
         this.weight = weight;
-        this.lenth = length;
+        this.length = length;
         this.productCode = productCode;
         this.price = price;
         this.status = status;

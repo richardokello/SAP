@@ -34,8 +34,8 @@ public class Promotion {
     @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "APPLICABLE_PRODUCT_ID", nullable = false)
-    @JoinColumn(name = "APPLICABLE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID", insertable = false,updatable = false)
+    //@Column(name = "APPLICABLE_PRODUCT_ID", nullable = false)
+    @JoinColumn(name = "APPLICABLE_PRODUCT_ID")//, referencedColumnName = "PRODUCT_ID")
     private List<Products> applicableProducts;
     @Column(name = "DISCOUNT_PERCENTAGE")
     @Nonnull

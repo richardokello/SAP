@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
+import javax.validation.constraints.Pattern;
+
 @Data
 @Entity
 @Table(name = "ADDRESS")
@@ -39,11 +41,10 @@ public class Address {
     @Column(name = "POSTAL_CODE")
     private String postalCode;
     @Column(name = "COUNTYR")
+
     @Pattern(regexp = "[A-Z]{2}", message = "2-letter ISO country code required")
-    @lombok.NonNull
     private String country;
-
+    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
     private String phone;
-
 
 }

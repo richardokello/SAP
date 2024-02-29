@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "")
 public class Discount {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "DISCOUNT_ID", updatable = false, nullable = false)
     private Long discountId;
     @Column(name = "NAME", nullable = false)

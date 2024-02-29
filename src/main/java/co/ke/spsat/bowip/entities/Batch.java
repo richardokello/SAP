@@ -13,28 +13,44 @@ import java.util.Date;
 @Data
 @Entity
 public class Batch {
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "BATCH_SEQ")
-    @SequenceGenerator(name = "BATCH_SEQ", sequenceName = "\"Batch_Seq\"",allocationSize = 1)
-    @Id
-    @Column(name = "BATCH_ID")
-    @NonNull
-    private Integer batchId;
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "BATCH_SEQ")
+//    @SequenceGenerator(name = "BATCH_SEQ", sequenceName = "\"Batch_Seq\"",allocationSize = 1)
+//    @Id
+//    @Column(name = "BATCH_ID")
+//    @NonNull
+//    private Long batchId;
+//
+//
+//    @ManyToOne
+//    @JoinColumn(name = "BATCH_ID", insertable = false, updatable = false)
+//    private Products product;
+//    @javax.validation.constraints.NotNull
+//    @Column(name = "BATCH_NAME")
+//    private String batchName;
 
-    @JoinColumn( name = "PRODUCTS", referencedColumnName = "PRODUCT_ID")
-    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Products products;
-    @NotNull
-    private int quantity;
-    @NotNull
-    private Date manufacturingDate;
-    @NotNull
-    private Date expirationDate;
     public Batch() {
 
     }
 
-    // Constructors, getters, setters, and other methods
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BATCH_SEQ")
+    @SequenceGenerator(name = "BATCH_SEQ", sequenceName = "\"Batch_Seq\"", allocationSize = 1)
+    @Id
+    @Column(name = "BATCH_ID")
+    @NonNull
+    private Long batchId;
+
+    @Column(name = "BATCH_NAME")
+    private String batchName;
+
+    @Column(name = "MANUFACTURING_DATE")
+    private Date manufacturingDate;
+
+    @Column(name = "EXPIRATION_DATE")
+    private Date expirationDate;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "PRODUCT_ID")
+    private Products product;
+
 
 }

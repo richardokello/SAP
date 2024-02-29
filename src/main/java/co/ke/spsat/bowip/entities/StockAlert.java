@@ -1,17 +1,23 @@
 package co.ke.spsat.bowip.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.lang.NonNull;
 
 @Data
 @Entity
 @Table(name = "STOCK_ALERT")
 public class StockAlert {
+
     @Id
-    private Long productId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ALERT_ID")
+    @NonNull
+    private Long alert_Id;
     private int threshold;
     private boolean alertActive;
+    public StockAlert() {
 
+    }
 }

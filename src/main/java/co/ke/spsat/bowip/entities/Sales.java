@@ -22,8 +22,8 @@ public class Sales {
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "PRODUCT_ID", nullable = false)
-    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", insertable = false,updatable = false)
+   // @Column(name = "PRODUCT_ID", nullable = false)
+    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     private Products productID;
     @Column(name = "QUANTITY")
     @NonNull

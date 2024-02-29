@@ -1,8 +1,13 @@
 package co.ke.spsat.bowip.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.NonNull;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -20,8 +25,17 @@ public class Regions {
     @Column(name = "DESCRIPTION")
     @NonNull
     private String description;
-     @ManyToOne
+    @JoinColumn( name = "LOCATION", referencedColumnName = "LOCATION_ID")
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Location location;
+
+    @JoinColumn( name = "CUSTOMERS", referencedColumnName = "REGION_ID")
+    @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Customers> customers;
 
     public Regions() {
 

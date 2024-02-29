@@ -21,14 +21,14 @@ public class ShoppingCart {
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "CUSTOMER_ID", nullable = false)
-    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID", insertable = false,updatable = false)
+   // @Column(name = "CUSTOMER_ID", nullable = false)
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "CUSTOMER_ID")
     private Customers customer;
     @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "CARTITEM_ID", nullable = false)
-    @JoinColumn(name = "CARTITEM_ID", referencedColumnName = "PRODUCT_ID", insertable = false,updatable = false)
+  //  @Column(name = "CARTITEM_ID", nullable = false)
+    @JoinColumn(name = "CARTITEM_ID")//, referencedColumnName = "CARTITEM_ID")
     private List<CartItem> cartItems;
     private BigDecimal totalAmount;
     private LocalDateTime creationDate;

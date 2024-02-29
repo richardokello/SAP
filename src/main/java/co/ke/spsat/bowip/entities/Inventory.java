@@ -17,11 +17,11 @@ public class Inventory {
     @Column(name = "INVENTORY_ID")
     @NonNull
     private String inventoryId;
-    @JoinColumn( name = "PRODUCTS_ID", referencedColumnName = "PRODUCTS_ID")
+    @JoinColumn( name = "PRODUCTS_ID", referencedColumnName = "PRODUCT_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "PRODUCTS_ID", nullable = false)
+   // @Column(name = "PRODUCTS_ID", nullable = false)
     private Products productID;
     @Column(name = "QUANTITY_AVAILABLE")
     @NonNull
@@ -30,7 +30,7 @@ public class Inventory {
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "LOCATION", nullable = false)
+   // @Column(name = "LOCATION", nullable = false)
     private Location location;
    public Inventory(){}
 }

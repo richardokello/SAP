@@ -23,7 +23,7 @@ public class Contract {
     private String terms;
     @Nonnull
     private double agreedPrice;
-    @JoinColumn( name = "SUPPLIERS_ID", referencedColumnName = "CONTRACT_ID")
+    @JoinColumn( name = "SUPPLIERS_ID", referencedColumnName = "SUPPLIER_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)

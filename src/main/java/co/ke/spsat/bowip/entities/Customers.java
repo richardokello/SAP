@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 
@@ -27,6 +28,10 @@ public class Customers {
     @Column(name = "LASTNAME", nullable = false)
     @Nonnull
     private String lastName;
+    @Column(name = "PHONE", nullable = false)
+    @Nonnull
+    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
+    private String phone;
     @Column(name = "EMAIL", nullable = false)
     private String email;
    // @Column(name = "SHIPPING_ADDRESS", nullable = false)
@@ -35,15 +40,14 @@ public class Customers {
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Address shippingAddress;
-    @JoinColumn( name = "BILLING_ADDRESS", referencedColumnName = "ADDRESS_ID")
-    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-   // @Column(name = "BILLING_ADDRESS", nullable = false)
-    private Address billingAddress;
-
+    private String businessName;
+    private String localRegistrationNumber;
+    private String businessLicenseNumber;
+    private String KRAPIN;
+    private String businessPrimaryContactNo;
+    private String businessSecondaryContactNo;
     @JoinColumn( name = "REGIONS", referencedColumnName = "REGION_ID")
-    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Regions regions;

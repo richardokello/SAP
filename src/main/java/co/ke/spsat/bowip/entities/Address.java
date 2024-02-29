@@ -26,8 +26,6 @@ public class Address {
     @NonNull
     private String state;
 
-
-
     @Column(name = "ADDRESS_LINE1", nullable = false)
     private String addressLine1;
 
@@ -44,7 +42,7 @@ public class Address {
 
     @Pattern(regexp = "[A-Z]{2}", message = "2-letter ISO country code required")
     private String country;
-    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
-    private String phone;
+//    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
+//    private String phone;
 
 }

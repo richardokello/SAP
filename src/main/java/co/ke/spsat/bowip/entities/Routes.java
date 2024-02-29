@@ -39,12 +39,12 @@ public class Routes {
 
     @Column(name = "ESTIMATED_TIME")
     private Time estimatedTime;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "customerId")
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @Column(name = "ASSIGNED_CUSTOMERS")
-    private List<Customers> assignedCustomers;
+//
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "customerId")
+//    @JsonIgnore
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @Column(name = "ASSIGNED_CUSTOMERS")
+//    private List<Customers> assignedCustomers;
 
     @Column(name = "DESCRIPTION")
     private String description;

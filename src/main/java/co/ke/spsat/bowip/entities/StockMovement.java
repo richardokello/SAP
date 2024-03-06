@@ -27,6 +27,7 @@ public class StockMovement {
     private Warehouse warehouse;
 
     private Long quantityMoved;
+    @Column(name = " MOVEMENT_TYPE")
     private String movementType;
 
 }

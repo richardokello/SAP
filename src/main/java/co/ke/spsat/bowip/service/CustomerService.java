@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+
 public class CustomerService {
     @Autowired
     RegionRepository regionRepository;
@@ -27,28 +28,27 @@ public class CustomerService {
     public CustomerResponseData createCustomers(CustomerDataRequest customerRequest){
 
         CustomerResponseData responseData = new CustomerResponseData();
-
         Customers customers=new Customers();
-        customers.setFirstName(customerRequest.getFirstName());
-        customers.setLastName(customerRequest.getLastName());
-        customers.setEmail(customerRequest.getEmail());
+
         customers.setRegions(customerRequest.getRegions());
-        customers.setShippingAddress(customerRequest.getAddress());
-        customers.setPhone(customerRequest.getPhone());
-        customers.setKRAPIN(customerRequest.getKRAPIN());
-        customers.setBusinessName(customers.getBusinessName());
+        customers.setCustomerCode(customerRequest.getCustomerCode());
+        customers.setRegions(customerRequest.getRegions());
+        customers.setDirectorName(customerRequest.getDirectorName());
+        customers.setBusinessEmail(customerRequest.getBusinessEmail());
+        customers.setShippingAddress(customerRequest.getShippingAddress());
+        customers.setKRA_PIN(customerRequest.getKRAPIN());
+        customers.setBusinessName(customerRequest.getBusinessName());
         customers.setBusinessLicenseNumber(customerRequest.getBusinessLicenseNumber());
         customers.setBusinessPrimaryContactNo(customerRequest.getBusinessPrimaryContactNo());
-        customers.setBusinessSecondaryContactNo(customers.getBusinessSecondaryContactNo());
-        customers.setLocalRegistrationNumber(customers.getLocalRegistrationNumber());
+        customers.setLocalRegistrationNumber(customerRequest.getLocalRegistrationNumber());
                 Address address=new Address();
-        address.setAddressLine1(customerRequest.getAddress().getAddressLine1());
-        address.setAddressLine2(customerRequest.getAddress().getAddressLine2());
-        address.setPostalCode(customerRequest.getAddress().getPostalCode());
-        address.setCountry(customerRequest.getAddress().getCountry());
-        address.setCity(customerRequest.getAddress().getCity());
-        address.setState(customerRequest.getAddress().getState());
-        address.setStreet(customerRequest.getAddress().getStreet());
+        address.setAddressLine1(customerRequest.getShippingAddress().getAddressLine1());
+        address.setAddressLine2(customerRequest.getShippingAddress().getAddressLine2());
+        address.setPostalCode(customerRequest.getShippingAddress().getPostalCode());
+        address.setCountry(customerRequest.getShippingAddress().getCountry());
+        address.setCity(customerRequest.getShippingAddress().getCity());
+        address.setState(customerRequest.getShippingAddress().getState());
+        address.setStreet(customerRequest.getShippingAddress().getStreet());
 
         addressRepository.save(address);
 //        Regions region = regionRepository.findById(customerRequest.getRegions().getId())
@@ -77,24 +77,17 @@ public class CustomerService {
             for (Customers customer : customersList) {
                 CustomerDataRequest responseData = new CustomerDataRequest();
                 responseData.setCustomerId(customer.getCustomerId());
-                responseData.setFirstName(customer.getFirstName());
-                responseData.setLastName(customer.getLastName());
-                responseData.setEmail(customer.getEmail());
-                responseData.setPhone(customer.getPhone());
-
-                // Set shipping address
+                responseData.setCustomerCode(customer.getCustomerCode());
+                responseData.setDirectorName(customer.getDirectorName());
                 Address shippingAddress = customer.getShippingAddress();
                 responseData.setShippingAddress(shippingAddress);
-
-                // Set business details
                 responseData.setBusinessName(customer.getBusinessName());
                 responseData.setLocalRegistrationNumber(customer.getLocalRegistrationNumber());
                 responseData.setBusinessLicenseNumber(customer.getBusinessLicenseNumber());
-                responseData.setKRAPIN(customer.getKRAPIN());
+                responseData.setKRAPIN(customer.getKRA_PIN());
                 responseData.setBusinessPrimaryContactNo(customer.getBusinessPrimaryContactNo());
-                responseData.setBusinessSecondaryContactNo(customer.getBusinessSecondaryContactNo());
-
-                // Set regions
+                responseData.setBusinessEmail(customer.getBusinessEmail());
+            // Set regions
                 Regions regions = customer.getRegions();
                 responseData.setRegions(regions);
 

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -40,12 +41,11 @@ public class ProductCOntroller {
         }
     }
     @GetMapping("/productList")
-    public ResponseEntity<List<Products>>getListOfProducts(@RequestParam(defaultValue = "0") Integer pageNo,
+    public ResponseEntity<List<ProductRequest>>getListOfProducts(@RequestParam(defaultValue = "0") Integer pageNo,
                                                      @RequestParam(defaultValue = "10") Integer pageSize,
                                                      @RequestParam(defaultValue = "id") String sortBy){
         try{
-
-            List<Products> productList;
+            List<ProductRequest> productList;
             productList=productsService.getListOfProducts(pageNo,pageSize,sortBy);
             if(!productList.isEmpty()){
                 return new ResponseEntity<>(productList,new HttpHeaders(), HttpStatus.OK);
@@ -58,7 +58,24 @@ public class ProductCOntroller {
         {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+@GetMapping(path = "/productsByBatch/{batchId}")
+    public ResponseEntity<List<Products>>getListOfProductsByBatch(@PathVariable Long batchId){
+        try{
+            List<Products>productList;
+            productList=productsService.getProductByBatch(batchId);
+            if(!productList.isEmpty()){
+                return new ResponseEntity<>(productList,new HttpHeaders(), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(new HttpHeaders(),HttpStatus.NO_CONTENT);
+            }
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(path = "/getProductById/{id}",method = RequestMethod.GET)

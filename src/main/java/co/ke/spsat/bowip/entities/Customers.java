@@ -22,30 +22,30 @@ public class Customers {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
    @Column(name = "CUSTOMER_ID", updatable = false, nullable = false)
     private Long customerId;
-    @Column(name = "FIRSTNAME", nullable = false)
-    @Nonnull
-    private String firstName;
-    @Column(name = "LASTNAME", nullable = false)
-    @Nonnull
-    private String lastName;
-    @Column(name = "PHONE", nullable = false)
-    @Nonnull
-    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
-    private String phone;
+    @Column(name = "OWNER", nullable = false)
+//    @Nonnull
+    private String directorName;
     @Column(name = "EMAIL", nullable = false)
-    private String email;
+    private String businessEmail;
    // @Column(name = "SHIPPING_ADDRESS", nullable = false)
     @JoinColumn( name = "SHIPPING_ADDRESS", referencedColumnName = "ADDRESS_ID")
-    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Address shippingAddress;
+ @Column(name = "CUSTOMER_CODE", nullable = false)
+ @Nonnull
+    private String customerCode;
+    @Column(name = "BUSINESS_NAME", nullable = false)
+    @Nonnull
     private String businessName;
     private String localRegistrationNumber;
     private String businessLicenseNumber;
-    private String KRAPIN;
+    @Column(name = "KRA_PIN", nullable = false)
+    @Nonnull
+    private String KRA_PIN;
+    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
     private String businessPrimaryContactNo;
-    private String businessSecondaryContactNo;
     @JoinColumn( name = "REGIONS", referencedColumnName = "REGION_ID")
     @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
     @JsonIgnore

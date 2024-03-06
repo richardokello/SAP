@@ -12,6 +12,7 @@ import java.util.Date;
 public class BatchRequest {
     private Long batchId;
     private String batchName;
+    private String batchNo;
     private Date manufacturingDate;
     private Date expiryDate;
 

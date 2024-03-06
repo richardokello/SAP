@@ -1,10 +1,17 @@
 package co.ke.spsat.bowip.dtos;
 
+import co.ke.spsat.bowip.entities.Address;
 import co.ke.spsat.bowip.entities.ProductCategory;
+import co.ke.spsat.bowip.entities.Regions;
 import co.ke.spsat.bowip.entities.Supplier;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,6 +37,7 @@ public class ProductRequest {
     private String SKU;
     private String status = "Active";
     private Boolean deleted = Boolean.FALSE;
-    private Supplier supplier;
+    private SupplierDTO supplier;
+
 
 }

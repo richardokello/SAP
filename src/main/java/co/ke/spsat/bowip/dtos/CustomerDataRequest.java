@@ -3,6 +3,7 @@ package co.ke.spsat.bowip.dtos;
 import co.ke.spsat.bowip.entities.Address;
 import co.ke.spsat.bowip.entities.Order;
 import co.ke.spsat.bowip.entities.Regions;
+import co.ke.spsat.bowip.entities.Routes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
@@ -20,20 +21,19 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomerDataRequest {
     private Long customerId;
-    private String firstName;
-    private String lastName;
-    @Column(name = "EMAIL", nullable = false)
-     private Address address;
      private Regions regions;
-    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
-    private String phone;
-    private String email;
 
     private Address shippingAddress;
     private String businessName;
     private String localRegistrationNumber;
     private String businessLicenseNumber;
     private String KRAPIN;
+    @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
     private String businessPrimaryContactNo;
-    private String businessSecondaryContactNo;
+    private String directorName;
+    @Column(name = "EMAIL", nullable = false)
+    private String businessEmail;
+    private String customerCode;
+    private Routes roues;
+
 }

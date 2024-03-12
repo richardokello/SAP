@@ -31,8 +31,9 @@ public class Routes {
 
     @Column(name = "DISTANCE")
     private BigDecimal distance;
+
     @JoinColumn( name = "REGIONS")
-    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Regions regions;
@@ -40,11 +41,15 @@ public class Routes {
     @Column(name = "ESTIMATED_TIME")
     private Time estimatedTime;
 
-    @OneToMany(fetch = FetchType.LAZY,  mappedBy = "customerId")
+//    @OneToMany(fetch = FetchType.LAZY,  mappedBy = "customerId")
+//    @JsonIgnore
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @Column(name = "ASSIGNED_CUSTOMERS")
+//    private List<Customers> assignedCustomers;
     @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-  //  @Column(name = "ASSIGNED_CUSTOMERS")
-    private List<Customers> assignedCustomers;
+    @JoinColumn(name = "CUSTOMER_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Customers customers;
 
     @Column(name = "DESCRIPTION")
     private String description;
@@ -53,7 +58,7 @@ public class Routes {
     private String status;
 
     @Column(name = "CREATED_DATE", updatable = false)
-    private Timestamp createdDate;
+    private String createdDate;
 
     @Column(name = "LAST_UPDATED_DATE")
     private Timestamp lastUpdatedDate;

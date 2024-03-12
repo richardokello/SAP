@@ -16,9 +16,9 @@ import java.util.List;
 @Table(name = "Regions")
 @AllArgsConstructor
 public class Regions {
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "REGION_SEQ")
     @SequenceGenerator(name = "REGION_SEQ", sequenceName = "\"Region_Seq\"",allocationSize = 1)
-    @Id
     @Column(name = "REGION_ID")
     @NonNull
     private Long Id;
@@ -41,6 +41,11 @@ public class Regions {
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Customers> customers;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "regions")
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Routes> routes;
 
     public Regions() {
 

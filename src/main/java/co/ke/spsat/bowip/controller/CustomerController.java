@@ -3,6 +3,7 @@ package co.ke.spsat.bowip.controller;
 import co.ke.spsat.bowip.dtos.CustomerDataRequest;
 import co.ke.spsat.bowip.dtos.CustomerResponseData;
 import co.ke.spsat.bowip.dtos.ProductResponse;
+import co.ke.spsat.bowip.entities.Customers;
 import co.ke.spsat.bowip.entities.Products;
 import co.ke.spsat.bowip.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class CustomerController {
         }
     }
     @GetMapping("/customerDataList")
-    public ResponseEntity<List<CustomerDataRequest>>getListOfProducts(@RequestParam(defaultValue = "0") Integer pageNo,
+    public ResponseEntity<List<CustomerDataRequest>>getListOfCustomer(@RequestParam(defaultValue = "0") Integer pageNo,
                                                            @RequestParam(defaultValue = "10") Integer pageSize,
                                                            @RequestParam(defaultValue = "id") String sortBy){
         try{
@@ -47,6 +45,25 @@ public class CustomerController {
             productList=customerService.getAllCustomerData(pageNo,pageSize,sortBy);
             if(!productList.isEmpty()){
                 return new ResponseEntity<>(productList,new HttpHeaders(), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(new HttpHeaders(),HttpStatus.NO_CONTENT);
+            }
+        }
+        catch (Exception e)
+        {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+    @GetMapping("/customerPerRoute/{id}")
+    public ResponseEntity<List<Customers>>getCustomerPerRoute(@PathVariable Long id){
+        try{
+
+            List<Customers> customers;
+            customers=customerService.getCustomersPerRoute(id);
+            if(!customers.isEmpty()){
+                return new ResponseEntity<>(customers,new HttpHeaders(), HttpStatus.OK);
             }
             else {
                 return new ResponseEntity<>(new HttpHeaders(),HttpStatus.NO_CONTENT);

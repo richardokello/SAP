@@ -5,6 +5,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Email;
@@ -14,6 +15,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "USERS")
@@ -42,9 +45,12 @@ public class Users {
     private String email;
     @Pattern(regexp = "(^[0-9]+$|^$)", message = "number only")
     @Column(name = "PHONE")
+    @Nonnull
     private String phone;
+    @Nonnull
     @Column(name = "USERNAME")
     private String username;
+    @Nonnull
     @Column(name = "PASWORD")
     private String password;
     @Column(name = "CREATED_AT")
@@ -61,16 +67,26 @@ public class Users {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "DEPARTMENT", referencedColumnName = "ID")
     private Department department;
-    private Roles roles;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "id")
+    @JsonIgnore
+    @BatchSize(size = 10)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Roles> roles;
 
     @Size(max = 256)
     @Column(name = "image_url", length = 256)
     private String imageUrl;
+    @Column(name = "sales_target")
+    private Double salesTarget;
 
+    @Column(name = "commission_rate")
+    private Double commissionRate;
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
-
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private Users manager;
     public Users() {
 
     }

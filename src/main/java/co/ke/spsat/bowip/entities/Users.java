@@ -1,9 +1,12 @@
 package co.ke.spsat.bowip.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
@@ -53,6 +56,12 @@ public class Users {
     @Column(name = "UPDATED_BY")
     private String updatedBy;
     private Instant modifiedAt;
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "DEPARTMENT", referencedColumnName = "ID")
+    private Department department;
+    private Roles roles;
 
     @Size(max = 256)
     @Column(name = "image_url", length = 256)

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -16,9 +17,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CustomerDataRequest {
     private Long customerId;
     private Regions regions;
+    private  String region;
     private Address shippingAddress;
     private String businessName;
     private String localRegistrationNumber;
@@ -31,6 +34,8 @@ public class CustomerDataRequest {
     private String businessEmail;
     private String customerCode;
     private Routes routes;
+    private String route;
     private CustomerCategory customerCategory;
+    private String customerCategor;
 
 }

@@ -4,18 +4,22 @@ import co.ke.spsat.bowip.dtos.CustomerDataRequest;
 import co.ke.spsat.bowip.dtos.CustomerResponseData;
 import co.ke.spsat.bowip.entities.*;
 import co.ke.spsat.bowip.repositories.*;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-
+@Slf4j
 public class CustomerService {
     @Autowired
     RegionRepository regionRepository;
@@ -24,7 +28,17 @@ public class CustomerService {
     @Autowired
     AddressRepository addressRepository;
     @Autowired
+    private CustomerInteractionRepository interactionRepository;
+
+    @Autowired
+    private CustomerFeedbackRepository feedbackRepository;
+
+    @Autowired
+    private CustomerSupportTicketRepository supportTicketRepository;
+    @Autowired
     RoutesRepository routesRepository;
+
+    List<Customers> customers = new ArrayList<>();
     @Autowired
     CustomerCategoryRepository customerCategoryRepository;
     @Transactional
@@ -47,9 +61,6 @@ public class CustomerService {
         customers.setBusinessLicenseNumber(customerRequest.getBusinessLicenseNumber());
         customers.setBusinessPrimaryContactNo(customerRequest.getBusinessPrimaryContactNo());
         customers.setLocalRegistrationNumber(customerRequest.getLocalRegistrationNumber());
-
-
-
 
         address.setAddressLine1(customerRequest.getShippingAddress().getAddressLine1());
         address.setAddressLine2(customerRequest.getShippingAddress().getAddressLine2());
@@ -112,7 +123,6 @@ public class CustomerService {
 
       //  if (routesRepository.existsById(customerRequest.getRoutes().getRouteId())){
             routes.setRouteId(customerRequest.getRoutes().getRouteId());
-
             routes.setCreatedDate(customerRequest.getRoutes().getCreatedDate());
             routes.setRegions(customerRequest.getRegions());
             routes.setDescription(customerRequest.getRoutes().getDescription());
@@ -140,21 +150,41 @@ public class CustomerService {
 
        return responseData;
     }
-public List<Customers>getCustomersPerRoute(Long routeId){
-   return  customerRepository.findCustomersByRouteId(routeId);
-
-}
-//    public List<Customers> getCustomersByRouteId(Long routeId) {
-//        Optional<Routes> routeOptional = routesRepository.findById(routeId);
+//public List<Customers>getCustomersPerRoute(Long routeId){
 //
-//        if (routeOptional.isPresent()) {
-//            Routes route = routeOptional.get();
-//            return route.getCustomers();
-//        } else {
-//            // Handle the case when the route with the given ID is not found
-//            return Collections.emptyList();
-//        }
-//    }
+//   //return  customerRepository.findCustomersByRouteId(routeId);
+//
+//}
+    public  List<Customers> getCustomers(Integer pageNo, Integer pageSize, String sortBy) {
+        return customerRepository.findAll();
+
+    }
+    public List<Customers> getCustomersByRegion(Regions region) {
+     return  customerRepository.findCustomersByRegionsId(region.getId());
+    }
+     public Optional<Customers> getCustomersByCustomerCode(String customerCode) {
+     return customerRepository.getCustomersByCustomerCode(customerCode);
+     }
+//  public List<Customers> getCustomersByRoute(Routes route) {
+//        return customerRepository.findCustomersByRouteId(route.getRouteId());
+// }
+
+
+    public List<CustomerDataRequest> getCustomersByRouteId(Long routeId,Integer pageNo, Integer pageSize, String sortBy) {
+        Optional<Routes> routeOptional = routesRepository.findById(routeId);
+
+        if (routeOptional.isPresent()) {
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+            List<Customers> customersList=customerRepository.findCustomersByRouteId(routeId, paging);
+            return customersList.stream()
+                    .map(this::mapToCustomerRequestData)
+                    .collect(Collectors.toList());
+        } else {
+            log.error("the route id {} does not exist");
+            // Handle the case when the route with the given ID is not found
+            return null;
+        }
+    }
     public List<CustomerDataRequest>  getAllCustomerData(Integer pageNo, Integer pageSize, String sortBy){
 
             List<CustomerDataRequest> responseDataList = new ArrayList<>();
@@ -175,8 +205,8 @@ public List<Customers>getCustomersPerRoute(Long routeId){
                 responseData.setBusinessPrimaryContactNo(customer.getBusinessPrimaryContactNo());
                 responseData.setBusinessEmail(customer.getBusinessEmail());
             // Set regions
-                Regions regions = customer.getRegions();
-                responseData.setRegions(regions);
+                //Regions regions = customer.getRegions();
+                responseData.setRegions(customer.getRegions());
 
                 responseDataList.add(responseData);
             }
@@ -185,5 +215,60 @@ public List<Customers>getCustomersPerRoute(Long routeId){
         }
 
 
+    public CustomerInteraction createInteraction(CustomerInteraction interaction) {
+        return interactionRepository.save(interaction);
+    }
+
+    public List<CustomerInteraction> getAllInteractions() {
+        return interactionRepository.findAll();
+    }
+
+    // Customer Feedback and Reviews
+    public CustomerFeedback createFeedback(CustomerFeedback feedback) {
+        return feedbackRepository.save(feedback);
+    }
+
+    public List<CustomerFeedback> getAllFeedbacks() {
+        return feedbackRepository.findAll();
+    }
+
+    // Customer Support Tickets
+    public CustomerSupportTicket createSupportTicket(CustomerSupportTicket supportTicket) {
+        supportTicket.setCreatedDate(new Date());
+        supportTicket.setStatus("Open");
+        return supportTicketRepository.save(supportTicket);
+    }
+
+    public List<CustomerSupportTicket> getAllSupportTickets() {
+        return supportTicketRepository.findAll();
+    }
+
+    public CustomerSupportTicket updateSupportTicket(Long id, CustomerSupportTicket supportTicketDetails) {
+        CustomerSupportTicket supportTicket = supportTicketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Support ticket not found"));
+        supportTicket.setIssueDescription(supportTicketDetails.getIssueDescription());
+        supportTicket.setStatus(supportTicketDetails.getStatus());
+        supportTicket.setResolvedDate(supportTicketDetails.getResolvedDate());
+        return supportTicketRepository.save(supportTicket);
+    }
+
+private CustomerDataRequest mapToCustomerRequestData(Customers customers){
+    return CustomerDataRequest.builder()
+            .customerId(customers.getCustomerId())
+            .customerCode(customers.getCustomerCode())
+            .customerCategor(customers.getCustomerCategory().getCategoryName())
+            .businessEmail(customers.getBusinessEmail())
+            .businessName(customers.getBusinessName())
+            .businessLicenseNumber(customers.getBusinessLicenseNumber())
+            .localRegistrationNumber(customers.getLocalRegistrationNumber())
+            .KRAPIN(customers.getKRA_PIN())
+            .businessPrimaryContactNo(customers.getBusinessPrimaryContactNo())
+            .directorName(customers.getDirectorName())
+             .region(customers.getRegions().getRegionName())
+            .route(customers.getRoutes().getRouteName())
+            .shippingAddress(customers.getShippingAddress())
+            .build();
+
+}
 
 }

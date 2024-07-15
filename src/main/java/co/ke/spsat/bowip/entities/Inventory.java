@@ -16,7 +16,7 @@ public class Inventory {
     @Id
     @Column(name = "INVENTORY_ID")
     @NonNull
-    private String inventoryId;
+    private Long inventoryId;
     @JoinColumn( name = "PRODUCTS_ID", referencedColumnName = "PRODUCT_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore

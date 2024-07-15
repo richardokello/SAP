@@ -2,6 +2,7 @@ package co.ke.spsat.bowip;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.mail.javamail.JavaMailSender;
 
 @SpringBootApplication
 public class Application {

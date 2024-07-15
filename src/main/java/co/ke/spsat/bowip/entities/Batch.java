@@ -20,8 +20,6 @@ public class Batch {
     @NonNull
     private Long batchId;
 
-    @Column(name = "BATCH_NAME")
-    private String batchName;
     @Column(name = "BATCH_NUMBER")
      private String batchNo;
 
@@ -34,7 +32,10 @@ public class Batch {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "PRODUCT_ID")
     private Products product;
+    private String productCode;
     public Batch() {
+
+
 
     }
 }

@@ -1,6 +1,7 @@
 package co.ke.spsat.bowip.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,14 +36,15 @@ public class Regions {
     @Column(name = "LOCATION_ID")
     @Pattern(regexp = "[A-Z]{2}", message = "2-letter ISO region code required")
     private String locationCOde;
-
-    @JoinColumn( name = "CUSTOMERS", referencedColumnName = "REGION_ID")
-    @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @JsonIgnoreProperties
+    @JoinColumn( name = "CUSTOMERS")
+    @OneToMany(fetch = FetchType.EAGER,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Customers> customers;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "regions")
+    @JsonIgnoreProperties
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "regions")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Routes> routes;

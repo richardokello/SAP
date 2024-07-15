@@ -30,11 +30,11 @@ public class CartItem {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Products products;
     @Nonnull
-    private int quantity;
+    private Double unitPrice;
+    private Long quantity;
+    @Column(name = "UNITY_PRICE")
     @Nonnull
-    private BigDecimal unitPrice;
-    @Nonnull
-    private BigDecimal totalAmount;
+    private Double itemPriceAmount;
 
     public CartItem() {
 

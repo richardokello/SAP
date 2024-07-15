@@ -26,16 +26,15 @@ public class OrderItem {
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
    // @Column(name = "PRODUCTS_ID", nullable = false)
-    private Products productNO;
-    @JoinColumn( name = "ORDER_NO", referencedColumnName = "ORDERS_ID")
-    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    //@Column(name = "ORDER_NO", nullable = false)
-    private Order orderNo;
-    private int quantity;
+    private Products product;
+    private  Double unitPrice;
+    private Long quantity;
     @Column(name = "UNITY_PRICE")
     @Nonnull
-    private BigDecimal unitPrice;
+    private Double totalPrice;
 
+
+    public OrderItem() {
+
+    }
 }

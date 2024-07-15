@@ -30,7 +30,8 @@ public class ShoppingCart {
   //  @Column(name = "CARTITEM_ID", nullable = false)
     @JoinColumn(name = "CARTITEM_ID")//, referencedColumnName = "CARTITEM_ID")
     private List<CartItem> cartItems;
-    private BigDecimal totalAmount;
+    private Double totalAmount;
     private LocalDateTime creationDate;
     private boolean isActive;
+
 }

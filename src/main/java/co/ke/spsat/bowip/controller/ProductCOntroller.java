@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,6 +40,23 @@ public class ProductCOntroller {
             response.setMessage(e.getMessage());
             return new ResponseEntity<ProductResponse>(response,HttpStatus.CONFLICT);
         }
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<Products>> searchProductsByName(@RequestParam String name) {
+        List<Products> products = productsService.searchProductsByName(name);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/filter/category")
+    public ResponseEntity<List<Products>> filterProductsByCategory(@RequestParam Long categoryId) {
+        List<Products> products = productsService.filterProductsByCategory(categoryId);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/filter/price")
+    public ResponseEntity<List<Products>> filterProductsByPriceRange(@RequestParam Double minPrice, @RequestParam Double maxPrice) {
+        List<Products> products = productsService.filterProductsByPriceRange(minPrice, maxPrice);
+        return ResponseEntity.ok(products);
     }
     @GetMapping("/productList")
     public ResponseEntity<List<ProductRequest>>getListOfProducts(@RequestParam(defaultValue = "0") Integer pageNo,

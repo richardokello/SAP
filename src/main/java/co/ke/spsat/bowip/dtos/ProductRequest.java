@@ -31,8 +31,9 @@ public class ProductRequest {
     private String length;
     private String productCode;
     private String image;
-    private BigDecimal price;
-    private Integer quantityInStock;
+    private Double price;
+    private Double sellingPrice;
+    private Long quantityInStock;
     private List<BatchRequest> batchRequests;  // List of BatchRequest objects
     private String SKU;
     private String status = "Active";

@@ -1,5 +1,6 @@
 package co.ke.spsat.bowip.entities;
 
+import co.ke.spsat.bowip.config.AppConstant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
@@ -27,8 +28,9 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USERS_SEQ")
     @SequenceGenerator(sequenceName = "users_seq", allocationSize = 1, name = "USERS_SEQ")
     private Long userId;
+
     @NotNull
-  //  @Pattern(regexp = Constants.LOGIN_REGEX)
+    @Pattern(regexp = AppConstant.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     @Column(length = 50, unique = true, nullable = false)
     private String login;
@@ -52,6 +54,8 @@ public class Users {
     private String username;
     @Nonnull
     @Column(name = "PASWORD")
+    @NotNull
+    @Size(min = 12, max = 60)
     private String password;
     @Column(name = "CREATED_AT")
     private Date createdAt;
@@ -67,7 +71,7 @@ public class Users {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "DEPARTMENT", referencedColumnName = "ID")
     private Department department;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "roleId")
     @JsonIgnore
     @BatchSize(size = 10)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -78,6 +82,21 @@ public class Users {
     private String imageUrl;
     @Column(name = "sales_target")
     private Double salesTarget;
+
+    @Size(max = 20)
+    @Column(name = "activation_key", length = 20)
+    @JsonIgnore
+    private String activationKey;
+
+    @Size(max = 20)
+    @Column(name = "reset_key", length = 20)
+
+    @JsonIgnore
+    private String resetKey;
+
+    @Column(name = "reset_date")
+    private Instant resetDate = null;
+
 
     @Column(name = "commission_rate")
     private Double commissionRate;

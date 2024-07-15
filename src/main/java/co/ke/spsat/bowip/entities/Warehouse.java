@@ -24,6 +24,7 @@ public class Warehouse {
     @JoinColumn(name = "LOCATION", referencedColumnName = "LOCATION_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     private Location location;
+    private int capacity;
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)

@@ -1,11 +1,13 @@
 package co.ke.spsat.bowip.repositories;
 
+import co.ke.spsat.bowip.entities.ProductCategory;
 import co.ke.spsat.bowip.entities.Products;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +21,9 @@ public interface ProductsRepository extends JpaRepository<Products, Long> {
     List<Products> findByBatchId(@Param("batchId") Long batchId);
     @Query("SELECT DISTINCT p FROM Products p JOIN FETCH p.supplier JOIN FETCH p.batches")
     List<Products> findAllWithBatchesAndSupplier();
+    List<Products> findByProductNameContainingIgnoreCase(String name);
+    List<Products>findByCategoryId(ProductCategory category);
+    List<Products> findBySellingPriceBetween(Double minPrice, Double maxPrice);
+    @Query("SELECT p FROM Products p WHERE p.productId = :productId")
+    Products findProductsByProductId(Long productId);
 }

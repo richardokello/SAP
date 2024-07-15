@@ -10,7 +10,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.NonNull;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Table(name = "PRODUCTS")
@@ -56,8 +55,9 @@ public class Products {
     @Column()
     private String image;
     @Column(name = "PRICE")
-    private BigDecimal price;
-    private Integer quantityInStock;
+    private Double price;
+    private Double sellingPrice;
+    private Long quantityInStock;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
     @JsonIgnore
@@ -81,7 +81,7 @@ public class Products {
                     String colour, String size,
                     String usageInstructions,
                     String weight, String length,
-                    String productCode, BigDecimal price,
+                    String productCode, Double price,
                     String status, Boolean deleted) {
         this.productId = productId;
         this.productName = productName;

@@ -18,10 +18,10 @@ public class Roles {
     @Column(name = "ROLE_ID")
     private Long roleId;
     @Basic(optional = false)
-@NotNull
-@Size(min = 1, max = 40)
-@Column(name = "ROLE_NAME")
-private String roleName;
+    @NotNull
+    @Size(min = 1, max = 40)
+    @Column(name = "ROLE_NAME")
+    private String roleName;
     @Size(max = 100)
     @Column(name = "DESCRIPTION")
     private String description;

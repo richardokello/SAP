@@ -8,6 +8,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.NonNull;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 @Entity
@@ -20,25 +22,28 @@ public class Order {
     @Column(name = "ORDERS_ID")
     @NonNull
     private Long orderId;
+    @ManyToOne
+    private ShippingOption shippingOption;
     @JoinColumn( name = "Customers", referencedColumnName = "CUSTOMER_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     //@Column(name = "PRODUCTS_ID", nullable = false)
     private Customers customer;
+
     @JoinColumn( name = "ORDER_ITEM")//, referencedColumnName = "ORDER_ITEM_ID")
     @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
-    //@Column(name = "PRODUCTS_ID", nullable = false)
     private List<OrderItem> orderItems;
     @Column(name = "ORDER_DATE")
-    private Date orderDate;
+    private LocalDateTime orderDate;
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Column(name = "ORDERSTATUS", nullable = false)
     @Enumerated
     private OrderStatus orderStatus;
+
     @JoinColumn( name = "SHOPPING_ID", referencedColumnName = "CART_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
@@ -49,7 +54,10 @@ public class Order {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Column(name = "ORDER_NO", nullable = false)
     private String OrderNO;
-
+   // @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
+    private String createdBy;
+    private Double orderAmount;
+    private Double taxAmount;
     public Order() {
 
     }

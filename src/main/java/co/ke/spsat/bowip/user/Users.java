@@ -1,6 +1,7 @@
-package co.ke.spsat.bowip.entities;
+package co.ke.spsat.bowip.user;
 
 import co.ke.spsat.bowip.config.AppConstant;
+import co.ke.spsat.bowip.entities.Department;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
@@ -10,33 +11,33 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Email;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
 @Table(name = "USERS")
 @AllArgsConstructor
-public class Users {
+public class Users implements UserDetails {
     @Id
     @Column(name = "USER_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USERS_SEQ")
     @SequenceGenerator(sequenceName = "users_seq", allocationSize = 1, name = "USERS_SEQ")
     private Long userId;
-
-    @NotNull
-    @Pattern(regexp = AppConstant.LOGIN_REGEX)
-    @Size(min = 1, max = 50)
-    @Column(length = 50, unique = true, nullable = false)
-    private String login;
-
-
-
+//
+//   // @NotNull
+//    @Pattern(regexp = AppConstant.LOGIN_REGEX)
+//    @Size(min = 1, max = 50)
+//    @Column(length = 50, unique = true, nullable = false)
+//    private String login;
     @Column(name = "FIRST_NAME")
     private String firstName;
     @Column(name = "LAST_NAME")
@@ -71,12 +72,20 @@ public class Users {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "DEPARTMENT", referencedColumnName = "ID")
     private Department department;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "roleId")
-    @JsonIgnore
-    @BatchSize(size = 10)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Roles> roles;
-
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "roleId")
+//    @JsonIgnore
+//    @BatchSize(size = 10)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private List<Roles> roles;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "USER_ROLES",
+            joinColumns = @JoinColumn(name = "USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ROLE_ID")
+    )
+    private Set<Roles> roles = new HashSet<>();
+//    @Enumerated(EnumType.STRING)
+//    private  Role role;
     @Size(max = 256)
     @Column(name = "image_url", length = 256)
     private String imageUrl;
@@ -108,6 +117,37 @@ public class Users {
     private Users manager;
     public Users() {
 
+    }
+
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return List.of(new SimpleGrantedAuthority(role.name()));
+@Override
+@JsonIgnore
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
 

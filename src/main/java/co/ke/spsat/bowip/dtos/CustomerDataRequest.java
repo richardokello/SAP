@@ -21,7 +21,7 @@ import java.util.List;
 public class CustomerDataRequest {
     private Long customerId;
     private Regions regions;
-    private  String region;
+    //private  String region;
     private Address shippingAddress;
     private String businessName;
     private String localRegistrationNumber;
@@ -34,8 +34,8 @@ public class CustomerDataRequest {
     private String businessEmail;
     private String customerCode;
     private Routes routes;
-    private String route;
+   // private String route;
     private CustomerCategory customerCategory;
-    private String customerCategor;
+   // private String customerCategor;
 
 }

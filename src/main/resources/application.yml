@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: BOWIP_SAT
+
+  datasource:
+    # url: jdbc:postgresql://localhost:5432/jwt_security
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bowip_sat_db
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+   # database-platform: org.hibernate.dialect.MySQLDialect
+application:
+  security:
+    jwt:
+      secret-key: 4bb6d1dfbafb64a681139d1586b6f1160d18159afd57c8c79136d7490630407c
+      access-token-expiration: 86400000
+      refresh-token-expiration: 604800000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    password:
+    username: richard.coder1@gmail.com
+    transport:
+      protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+server:
+  port: 9091
+  servlet:
+    application-display-name: BOWIP-SAT
+    context-path: /api/v1

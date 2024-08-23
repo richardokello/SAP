@@ -1,7 +1,8 @@
-package co.ke.spsat.bowip.entities;
+package co.ke.spsat.bowip.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Data
 @Table(name = "ROLES")
 @Entity
+@NoArgsConstructor
 public class Roles {
     private static final long serialVersionUID = 1L;
     @Id
@@ -39,7 +41,8 @@ public class Roles {
     @Size(max = 3)
     @Column(name = "INTRASH")
     private String intrash;
-
+    @ManyToMany(mappedBy = "roles")
+    private Set<Users> users;
     @Transient
     private Set<Short> permissions;
 }

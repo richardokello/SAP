@@ -2,10 +2,12 @@ package co.ke.spsat.bowip.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 @Entity
 @Data
+@NoArgsConstructor
 public class CustomerFeedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

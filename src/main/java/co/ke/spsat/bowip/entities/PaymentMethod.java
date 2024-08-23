@@ -3,11 +3,13 @@ package co.ke.spsat.bowip.entities;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
 @Entity
 @Data
 @Table(name = "PAYMENTMETHODS")
+@NoArgsConstructor
 public class PaymentMethod {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO )

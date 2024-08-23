@@ -3,6 +3,7 @@ package co.ke.spsat.bowip.entities;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "")
+@NoArgsConstructor
 public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

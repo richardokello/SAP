@@ -1,2 +1,9 @@
-package co.ke.spsat.bowip.security;public class AuthenticationRequest {
+package co.ke.spsat.bowip.security;
+
+import lombok.Data;
+
+@Data
+public class AuthenticationRequest {
+    private String username;
+    private String password;
 }

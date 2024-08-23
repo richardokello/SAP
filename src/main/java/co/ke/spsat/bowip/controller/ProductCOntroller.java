@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ProductCOntroller {
     @Autowired

@@ -14,12 +14,12 @@ import java.util.Date;
 @Builder
 public class BatchRequest {
     private Long batchId;
-    private String batchName;
+  //  private String batchName;
     private String batchNo;
     private Date manufacturingDate;
     private Date expiryDate;
    // private Products productId;
-    private String productCode;
+   // private String productCode;
 
 
 }

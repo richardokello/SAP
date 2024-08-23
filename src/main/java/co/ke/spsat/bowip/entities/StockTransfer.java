@@ -1,5 +1,6 @@
 package co.ke.spsat.bowip.entities;
 
+import co.ke.spsat.bowip.user.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 

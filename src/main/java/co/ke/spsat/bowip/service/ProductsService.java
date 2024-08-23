@@ -54,7 +54,7 @@ public ProductResponse createProducts(ProductRequest productDTO){
     products.setWeight(productDTO.getWeight());
     products.setDescription(productDTO.getDescription());
     products.setUsageInstructions(productDTO.getUsageInstructions());
-    if(!supplierRepository.findById(productDTO.getSupplier().getSupplierId()).isPresent()){
+    if(supplierRepository.findById(productDTO.getSupplier().getSupplierId()).isEmpty()){
         supplier.setSupplierName(productDTO.getSupplier().getSupplierName());
         supplier.setStatus("INACTIVE");
         //  supplier.setContracts(productDTO.getSupplier().getContracts());
@@ -70,8 +70,9 @@ public ProductResponse createProducts(ProductRequest productDTO){
             Batch batch=new Batch();
             batch.setProduct(products);
           //  batch.setBatchId(batchRequest.getBatchId());
-         //   batch.setBatchName(batchRequest.getBatchName());
+            //batch.ser(batchRequest.getBatchName());
             batch.setExpirationDate(batchRequest.getExpiryDate());
+            batch.setBatchNo(batchRequest.getBatchNo());
             batch.setManufacturingDate(batchRequest.getManufacturingDate());
             batchList.add(batch);
         }
@@ -137,7 +138,6 @@ response.setMessage(productDTO.getProductName() + " created successfully");
                 batchDTOList.add(batchDTO);
             }
             productDTO.setBatchRequests(batchDTOList);
-
             // Map supplier to SupplierDTO
             Supplier supplier = products.getSupplier();
             if (supplier != null) {
@@ -152,10 +152,8 @@ response.setMessage(productDTO.getProductName() + " created successfully");
                 // ... other fields
                 productDTO.setSupplier(supplierDTO);
             }
-
             productDTOList.add(productDTO);
         }
-
         return productDTOList;
     }
     public  List<Products> getProductByBatch(Long Id){

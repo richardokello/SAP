@@ -13,7 +13,7 @@ public class MarketingController {
     private MarketingService marketingService;
 
     // Discount Codes and Coupons
-    @PostMapping("/discount-codes")
+    @PostMapping("/create-discount-codes")
     public ResponseEntity<DiscountCode> createDiscountCode(@RequestBody DiscountCode discountCode) {
         DiscountCode createdDiscountCode = marketingService.createDiscountCode(discountCode);
         return ResponseEntity.ok(createdDiscountCode);

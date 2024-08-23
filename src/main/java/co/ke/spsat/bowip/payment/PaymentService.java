@@ -1,9 +1,9 @@
-package co.ke.spsat.bowip.service;
+package co.ke.spsat.bowip.payment;
 
-import co.ke.spsat.bowip.entities.Order;
 import co.ke.spsat.bowip.entities.Payment;
 import co.ke.spsat.bowip.repositories.OrderRepository;
 import co.ke.spsat.bowip.repositories.PaymentRepository;
+import co.ke.spsat.bowip.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

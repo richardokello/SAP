@@ -47,10 +47,10 @@ public BatchRequest updateBatchById(Long id, BatchRequest batchRequest){
 
     @NotNull
     private BatchRequest getBatchRequest(BatchRequest batchRequest, Batch batch) {
-        batch.setProductCode(batchRequest.getProductCode());
+       // batch.setProductCode(batchRequest.getProductCode());
         batch.setBatchNo(batchRequest.getBatchNo());
         batch.setManufacturingDate(batchRequest.getManufacturingDate());
-        batch.setProductCode(batchRequest.getProductCode());
+       // batch.setProductCode(batchRequest.getProductCode());
         batch.setExpirationDate(batchRequest.getExpiryDate());
         batchRepo.save(batch);
         return batchRequest;
@@ -58,11 +58,11 @@ public BatchRequest updateBatchById(Long id, BatchRequest batchRequest){
 
     private BatchRequest mapToCustomerRequestData(Batch batch){
         return BatchRequest.builder()
+                .batchId(batch.getBatchId())
                 .batchNo(batch.getBatchNo())
                 .expiryDate(batch.getExpirationDate())
                 .manufacturingDate(batch.getManufacturingDate())
-                .productCode(batch.getProductCode())
+               // .productCode(batch.getProductCode())
                 .build();
-
     }
 }

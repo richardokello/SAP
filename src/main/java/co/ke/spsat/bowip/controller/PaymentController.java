@@ -1,7 +1,7 @@
 package co.ke.spsat.bowip.controller;
 
 import co.ke.spsat.bowip.entities.Payment;
-import co.ke.spsat.bowip.service.PaymentService;
+import co.ke.spsat.bowip.payment.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

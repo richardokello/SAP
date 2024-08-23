@@ -5,6 +5,7 @@ import co.ke.spsat.bowip.dtos.stockDTOs.StockDTO;
 import co.ke.spsat.bowip.dtos.stockDTOs.StockTransferRequest;
 import co.ke.spsat.bowip.entities.*;
 import co.ke.spsat.bowip.repositories.*;
+import co.ke.spsat.bowip.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -104,7 +105,7 @@ public class StockService {
 
     // Transfer Stock
     public Stock transferStock(StockTransferRequest stockRequest, Long quantity, Long userId) {
-        removeStock(stockRequest.getToWarehouseId().getWarehouseID(), stockRequest.getFromWarehouseId().getWarehouseID(), (long) quantity, userId, "Transfer to warehouse " + stockRequest.getToWarehouseId().getWarehouseName());
+        removeStock(stockRequest.getToWarehouseId().getWarehouseID(), stockRequest.getFromWarehouseId().getWarehouseID(), (Long) quantity, userId, "Transfer to warehouse " + stockRequest.getToWarehouseId().getWarehouseName());
         StockDTO stockDTO=new StockDTO();
         stockDTO.setProductId(stockRequest.getProductId().getProductId());
         stockDTO.setWarehouseId(stockRequest.getToWarehouseId().getWarehouseID());

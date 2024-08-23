@@ -4,6 +4,7 @@ import co.ke.spsat.bowip.Exception.ResourceNotFoundException;
 import co.ke.spsat.bowip.dtos.OrderItemRequest;
 import co.ke.spsat.bowip.entities.*;
 import co.ke.spsat.bowip.repositories.*;
+import co.ke.spsat.bowip.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

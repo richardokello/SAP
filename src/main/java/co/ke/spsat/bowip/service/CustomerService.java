@@ -204,6 +204,8 @@ public class CustomerService {
                 responseData.setKRAPIN(customer.getKRA_PIN());
                 responseData.setBusinessPrimaryContactNo(customer.getBusinessPrimaryContactNo());
                 responseData.setBusinessEmail(customer.getBusinessEmail());
+                responseData.setRoutes(customer.getRoutes());
+                responseData.setCustomerCategory(customer.getCustomerCategory());
             // Set regions
                 //Regions regions = customer.getRegions();
                 responseData.setRegions(customer.getRegions());
@@ -256,7 +258,7 @@ private CustomerDataRequest mapToCustomerRequestData(Customers customers){
     return CustomerDataRequest.builder()
             .customerId(customers.getCustomerId())
             .customerCode(customers.getCustomerCode())
-            .customerCategor(customers.getCustomerCategory().getCategoryName())
+            .customerCategory(customers.getCustomerCategory())
             .businessEmail(customers.getBusinessEmail())
             .businessName(customers.getBusinessName())
             .businessLicenseNumber(customers.getBusinessLicenseNumber())
@@ -264,8 +266,8 @@ private CustomerDataRequest mapToCustomerRequestData(Customers customers){
             .KRAPIN(customers.getKRA_PIN())
             .businessPrimaryContactNo(customers.getBusinessPrimaryContactNo())
             .directorName(customers.getDirectorName())
-             .region(customers.getRegions().getRegionName())
-            .route(customers.getRoutes().getRouteName())
+             .regions(customers.getRegions())
+            .routes(customers.getRoutes())
             .shippingAddress(customers.getShippingAddress())
             .build();
 

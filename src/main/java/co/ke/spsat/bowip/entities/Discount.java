@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -20,15 +21,16 @@ public class Discount {
     private Long discountId;
     @Column(name = "NAME", nullable = false)
     @Nonnull
-    private String name;
+    private String code;
+
     @Column(name = "DISCOUNT_PERCENTAGE", nullable = false)
     @Nonnull
-    private double discountPercentage;
-    @Column(name = "STARTDATE", nullable = false)
+    private BigDecimal discountPercentage;
     @Nonnull
-    private LocalDate startDate;
-    @Column(name = "ENDDATE", nullable = false)
+    private LocalDate validFrom;
+
     @Nonnull
-    private LocalDate endDate;
+    private LocalDate validTo;
+    private Boolean isActive;
 
 }

@@ -45,5 +45,13 @@ public class NotificationService {
         message.setText("Your order is now being shipped. Order ID: " + order.getOrderId());
         mailSender.send(message);
     }
+
+    public void sendNotification(String email) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Shipping Update");
+        message.setText("product of this batch is expiring");
+        mailSender.send(message);
+    }
     }
 

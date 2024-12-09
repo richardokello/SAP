@@ -3,9 +3,7 @@ package co.ke.spsat.bowip.controller;
 import co.ke.spsat.bowip.dtos.stockDTOs.StockDTO;
 import co.ke.spsat.bowip.dtos.stockDTOs.StockRemovalRequest;
 import co.ke.spsat.bowip.dtos.stockDTOs.StockTransferRequest;
-import co.ke.spsat.bowip.entities.Products;
 import co.ke.spsat.bowip.entities.Stock;
-import co.ke.spsat.bowip.entities.Warehouse;
 import co.ke.spsat.bowip.service.stockmanager.StockService;
 import co.ke.spsat.bowip.service.stockmanager.StockTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +64,13 @@ public class StockController {
         Long stockLevel = stockService.getStockLevel(productId, warehouseId);
         return ResponseEntity.ok(stockLevel);
     }
-
+    @GetMapping("/stock")
+    public ResponseEntity<List<Stock>> getAllStocks(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                    @RequestParam(defaultValue = "10") Integer pageSize,
+                                                    @RequestParam(defaultValue = "id") String sortBy) {
+        List<Stock> stockList = stockService.getAllStocks(pageNo, pageSize,sortBy);
+        return ResponseEntity.ok(stockList);
+    }
     // Endpoint to transfer stock
 //    @PostMapping("/transfer")
 //    public ResponseEntity<Stock> transferStock(@RequestBody StockTransferRequest request) {

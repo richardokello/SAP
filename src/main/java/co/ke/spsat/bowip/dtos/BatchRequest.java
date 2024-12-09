@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -16,8 +17,8 @@ public class BatchRequest {
     private Long batchId;
   //  private String batchName;
     private String batchNo;
-    private Date manufacturingDate;
-    private Date expiryDate;
+    private LocalDate manufacturingDate;
+    private LocalDate expiryDate;
    // private Products productId;
    // private String productCode;
 

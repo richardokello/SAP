@@ -7,6 +7,7 @@ import co.ke.spsat.bowip.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,9 @@ public class CustomerBehaviorService {
     public List<Customers> getHighSpendingCustomers() {
         return customerRepository.findAll().stream()
                 .filter(customer -> orderRepository.findByCustomer(customer).stream()
-                        .mapToDouble(Order::getOrderAmount)
-                        .sum() > 100000)
+                        .map(Order::getTotalOrderAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+                        .compareTo(new BigDecimal(100000))>0)
                 .collect(Collectors.toList());
     }
 }

@@ -2,7 +2,7 @@ package co.ke.spsat.bowip.service;
 
 import co.ke.spsat.bowip.entities.*;
 import co.ke.spsat.bowip.repositories.AffiliateProgramRepository;
-import co.ke.spsat.bowip.repositories.DiscountCodeRepository;
+import co.ke.spsat.bowip.repositories.DiscountRepository;
 import co.ke.spsat.bowip.repositories.LoyaltyProgramRepository;
 import co.ke.spsat.bowip.repositories.SpecialOfferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.List;
 public class MarketingService {
 
     @Autowired
-    private DiscountCodeRepository discountCodeRepository;
+    private DiscountRepository discountCodeRepository;
 
     @Autowired
     private SpecialOfferRepository specialOfferRepository;
@@ -26,16 +26,16 @@ public class MarketingService {
     private AffiliateProgramRepository affiliateProgramRepository;
 
     // Discount Codes and Coupons
-    public DiscountCode createDiscountCode(DiscountCode discountCode) {
+    public Discount createDiscountCode(Discount discountCode) {
         return discountCodeRepository.save(discountCode);
     }
 
-    public List<DiscountCode> getAllDiscountCodes() {
+    public List<Discount> getAllDiscountCodes() {
         return discountCodeRepository.findAll();
     }
 
-    public DiscountCode updateDiscountCode(Long id, DiscountCode discountCodeDetails) {
-        DiscountCode discountCode = discountCodeRepository.findById(id)
+    public Discount updateDiscountCode(Long id, Discount discountCodeDetails) {
+        Discount discountCode = discountCodeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Discount code not found"));
         discountCode.setCode(discountCodeDetails.getCode());
         discountCode.setDiscountPercentage(discountCodeDetails.getDiscountPercentage());

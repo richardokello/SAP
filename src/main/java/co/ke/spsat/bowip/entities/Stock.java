@@ -3,6 +3,7 @@ package co.ke.spsat.bowip.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -15,13 +16,15 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "STOCK")
-public class Stock {
+@RequiredArgsConstructor
+public class
+Stock {
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "STOCK_SEQ")
     @SequenceGenerator(name = "STOCK_SEQ", sequenceName = "\"Stock_Seq\"",allocationSize = 1)
     @Id
     @Column(name = "STOCK_ID")
     @NonNull
-    private String stockId;
+    private Long stockId;
 
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JsonIgnore
@@ -35,7 +38,8 @@ public class Stock {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "BATCH_ID", referencedColumnName = "BATCH_ID")
     private Batch batchNumber;
-
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StockBatch> stockBatches;
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "id")
 //  //  @JoinColumn(name = "TRANSACTION_ID", referencedColumnName = "transactionId")
 //    @JsonIgnore
@@ -51,6 +55,7 @@ public class Stock {
     @ManyToOne
     @JoinColumn(name = "warehouse_id", referencedColumnName = "warehouse_id")
     private Warehouse warehouseId;
+    private Long sourceWarehouseId;
 
     @Column(name = "quantity_on_hand")
     private Long quantityOnHand;

@@ -6,6 +6,8 @@ import org.json.*;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Objects;
+
 public class MpesaService {
 
 
@@ -46,7 +48,6 @@ public class MpesaService {
                     .get()
                     .addHeader("authorization", "Basic "+encoded)
                     .addHeader("cache-control", "no-cache")
-
                     .build();
 
             Response response = client.newCall(request).execute();
@@ -97,7 +98,6 @@ public class MpesaService {
             jsonObject.put("QueueTimeOutURL", queueTimeOutURL);
             jsonObject.put("ResultURL", resultURL);
             jsonObject.put("Occassion", occassion);
-
 
             jsonArray.put(jsonObject);
 
@@ -207,9 +207,6 @@ public class MpesaService {
             jsonObject.put("Timestamp", timestamp);
             jsonObject.put("CheckoutRequestID", checkoutRequestID);
 
-
-
-
             jsonArray.put(jsonObject);
 
             String requestJson=jsonArray.toString().replaceAll("[\\[\\]]","");
@@ -227,8 +224,7 @@ public class MpesaService {
                     .build();
 
             Response response = client.newCall(request).execute();
-            System.out.println(response.body().string());
-            return response.body().toString();
+            return response.body().string();
 
         }
         public String reversal(String initiator, String securityCredential, String commandID, String transactionID, String amount, String receiverParty, String recieverIdentifierType, String resultURL,String queueTimeOutURL, String remarks, String ocassion) throws IOException {

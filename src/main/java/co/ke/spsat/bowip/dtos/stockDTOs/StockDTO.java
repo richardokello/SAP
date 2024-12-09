@@ -30,23 +30,23 @@ public class StockDTO {
 
 
 
-    public class Stock {
-        private Long stockId; // Unique identifier for the stock item
-        private String itemName; // Name of the item
-        private String description; // Description of the item
-        private String category; // Category of the item
-        private int quantityOnHand; // Current stock level
-        private int reorderPoint; // Reorder point for the item
-        private int safetyStock; // Safety stock level
-        private double unitPrice; // Unit price of the item
-        private String batchNumber; // Optional batch/lot number
-        private String serialNumber; // Optional serial number
-        private Long warehouseId; // Identifier for the warehouse storing the item
-        private Date expiryDate; // Expiry date for perishable items
-        private Date lastUpdated; // Last updated timestamp
-        private Date createdDate; // Created timestamp
-
-        // Getters and setters for all fields
-        // Constructor, equals, hashCode, and toString methods
-    }
+//    public class Stock {
+//        private Long stockId; // Unique identifier for the stock item
+//        private String itemName; // Name of the item
+//        private String description; // Description of the item
+//        private String category; // Category of the item
+//        private int quantityOnHand; // Current stock level
+//        private int reorderPoint; // Reorder point for the item
+//        private int safetyStock; // Safety stock level
+//        private double unitPrice; // Unit price of the item
+//        private String batchNumber; // Optional batch/lot number
+//        private String serialNumber; // Optional serial number
+//        private Long warehouseId; // Identifier for the warehouse storing the item
+//        private Date expiryDate; // Expiry date for perishable items
+//        private Date lastUpdated; // Last updated timestamp
+//        private Date createdDate; // Created timestamp
+//
+//        // Getters and setters for all fields
+//        // Constructor, equals, hashCode, and toString methods
+//    }
 }

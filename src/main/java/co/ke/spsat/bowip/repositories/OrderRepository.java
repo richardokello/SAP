@@ -13,15 +13,18 @@ import java.util.Date;
 import java.util.List;
 
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface
+      OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByCustomer(Customers customer);
    List<Order>  findByCustomerCustomerId(Long customerId);
-    @Query("SELECT o FROM Order o WHERE o.orderDate BETWEEN :startDate AND :endDate")
+    @Query("SELECT o FROM Order o WHERE o.orderDate BETWEEN :startDate AND :endDate ")
     List<Order> findOrdersByDateRange(Date startDate, Date endDate);
+   List<Order> findAllByProductsProductId(Long  products);
 
     Long countByOrderDateBetween(LocalDateTime orderDate, LocalDateTime orderDate2);
 
     Long countByCustomer(Customers customer);
+    Long countByProducts(Products products);
 
     Collection<Order> findByOrderDateBetween(LocalDateTime orderDate, LocalDateTime orderDate2);
     List<Order> findByOrderDateBetweenAndOrderStatus(LocalDateTime startDate, LocalDateTime endDate, OrderStatus orderStatus);

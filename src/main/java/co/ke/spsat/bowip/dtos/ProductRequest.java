@@ -31,10 +31,10 @@ public class ProductRequest {
     private String length;
     private String productCode;
     private String image;
-    private Double price;
-    private Double sellingPrice;
+    private BigDecimal price;
+    private BigDecimal sellingPrice;
     private Long quantityInStock;
-    private List<BatchRequest> batchRequests;  // List of BatchRequest objects
+    private BatchRequest batchRequests;  // List of BatchRequest objects
     private String SKU;
     private String status = "Active";
     private Boolean deleted = Boolean.FALSE;

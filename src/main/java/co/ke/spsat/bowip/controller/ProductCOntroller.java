@@ -3,9 +3,9 @@ package co.ke.spsat.bowip.controller;
 
 import co.ke.spsat.bowip.dtos.ProductRequest;
 import co.ke.spsat.bowip.dtos.ProductResponse;
+import co.ke.spsat.bowip.entities.Discount;
 import co.ke.spsat.bowip.entities.Products;
 import co.ke.spsat.bowip.service.ProductsService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,16 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RestController
 //@RequestMapping("/api")
 @RequiredArgsConstructor
-public class ProductCOntroller {
+public class ProductController {
     @Autowired
     ProductsService productsService;
 
@@ -40,7 +36,14 @@ public class ProductCOntroller {
             response.setMessage(e.getMessage());
             return new ResponseEntity<ProductResponse>(response,HttpStatus.CONFLICT);
         }
+    } @PostMapping("/setProductDiscount")
+    public ResponseEntity<ProductResponse> setProductDiscount(@RequestBody @Validated Discount productRequest, Long productId){
+        ProductResponse response;
+        response=  productsService.setDiscount(productRequest, productId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
+
     @GetMapping("/search")
     public ResponseEntity<List<Products>> searchProductsByName(@RequestParam String name) {
         List<Products> products = productsService.searchProductsByName(name);

@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.NonNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Table(name = "PRODUCTS")
@@ -55,16 +56,17 @@ public class Products {
     @Column()
     private String image;
     @Column(name = "PRICE")
-    private Double price;
-    private Double sellingPrice;
+    private BigDecimal price;
+    @ManyToOne
+    private Discount discount;
+    private BigDecimal sellingPrice;
     private Long quantityInStock;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     @BatchSize(size = 10)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Batch> batches;
-
+    private Batch batches;
     private String SKU;
     @Column(name = "STATUS")
     private  String status="Active";
@@ -75,28 +77,28 @@ public class Products {
     @JoinColumn(name = "SUPPLIER_ID")//, referencedColumnName = "BATCH_ID")
     private Supplier supplier;
 
-    public Products(@NonNull Long productId,
-                    String productName,
-                    String brand, String description,
-                    String colour, String size,
-                    String usageInstructions,
-                    String weight, String length,
-                    String productCode, Double price,
-                    String status, Boolean deleted) {
-        this.productId = productId;
-        this.productName = productName;
-        this.brand = brand;
-        this.description = description;
-        this.colour = colour;
-        this.size = size;
-        this.usageInstructions = usageInstructions;
-        this.weight = weight;
-        this.length = length;
-        this.productCode = productCode;
-        this.price = price;
-        this.status = status;
-        this.deleted = deleted;
-    }
+//    public Products(@NonNull Long productId,
+//                    String productName,
+//                    String brand, String description,
+//                    String colour, String size,
+//                    String usageInstructions,
+//                    String weight, String length,
+//                    String productCode, BigDecimal price,
+//                    String status, Boolean deleted) {
+//        this.productId = productId;
+//        this.productName = productName;
+//        this.brand = brand;
+//        this.description = description;
+//        this.colour = colour;
+//        this.size = size;
+//        this.usageInstructions = usageInstructions;
+//        this.weight = weight;
+//        this.length = length;
+//        this.productCode = productCode;
+//        this.price = price;
+//        this.status = status;
+//        this.deleted = deleted;
+//    }
 
     public Products() {
 

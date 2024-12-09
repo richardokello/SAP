@@ -16,6 +16,7 @@ public class BatchAutomationController {
     }
 
 
+
     // Endpoint to trigger quality and expiration check
     @GetMapping("/quality-control")
     public ResponseEntity<String> triggerQualityControlCheck() {

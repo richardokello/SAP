@@ -21,5 +21,6 @@ public interface CustomerRepository extends JpaRepository<Customers, Long> {
        Optional<Customers> getCustomersByCustomerCode(String customerCode);
 
 
-     //  List<Customers> findAllCustomers();
+//List<Customers> findAllCustomers();
+       //List<Customers>findAllBy
 }

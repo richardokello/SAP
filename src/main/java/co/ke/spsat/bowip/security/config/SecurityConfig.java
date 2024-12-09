@@ -37,9 +37,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         req->req.requestMatchers("/auth/**")
                                 .permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 //.requestMatchers("/admin_only/**").hasAuthority("ADMIN")
-                                .anyRequest()
-                                .authenticated()
+                                .anyRequest().permitAll()
+                               // .authenticated()
                 ).userDetailsService(userDetailSrvcImp)
                 .sessionManagement(session->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

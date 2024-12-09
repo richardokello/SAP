@@ -19,10 +19,14 @@ public class StockTransfer {
     @ManyToOne
     @JoinColumn(name = "requested_by")
     private Users requestedBy;
+    private Long requested_by_id;
 
+@Column(name = "ProductDetails")
+    private String products;
     @ManyToOne
     @JoinColumn(name = "approved_by")
     private Users approvedBy;
+    private Long approved_by_id;
 
     private Date requestDate;
     private Date approvalDate;// Current status of the transfer (e.g., pending, completed).

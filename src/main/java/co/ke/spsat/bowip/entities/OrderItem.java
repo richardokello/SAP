@@ -27,11 +27,12 @@ public class OrderItem {
     @OnDelete(action = OnDeleteAction.CASCADE)
    // @Column(name = "PRODUCTS_ID", nullable = false)
     private Products product;
-    private  Double unitPrice;
+    private double costOfGoodsSold;
+    private  BigDecimal unitPrice;
     private Long quantity;
     @Column(name = "UNITY_PRICE")
     @Nonnull
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
 
     public OrderItem() {

@@ -10,7 +10,6 @@ import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 @Entity
 @Table(name = "ORDERS TABLE")
@@ -43,6 +42,10 @@ public class Order {
     @Column(name = "ORDERSTATUS", nullable = false)
     @Enumerated
     private OrderStatus orderStatus;
+    @OneToMany
+    private List<Products> products;
+
+    private double totalCOGS;
 
     @JoinColumn( name = "SHOPPING_ID", referencedColumnName = "CART_ID")
     @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
@@ -50,14 +53,16 @@ public class Order {
     @OnDelete(action = OnDeleteAction.CASCADE)
    // @Column(name = "SHOPPING_ID", nullable = false)
     private ShoppingCart shoppingCart;
+
+    private String batch;
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Column(name = "ORDER_NO", nullable = false)
     private String OrderNO;
    // @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL, optional = false)
     private String createdBy;
-    private Double orderAmount;
-    private Double taxAmount;
+    private BigDecimal totalOrderAmount;
+    private BigDecimal taxAmount;
     public Order() {
 
     }

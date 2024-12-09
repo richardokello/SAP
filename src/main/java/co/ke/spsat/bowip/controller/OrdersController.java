@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -40,6 +41,11 @@ public class OrdersController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Order>> getOrdersByCustomer(@PathVariable Long customerId) {
         List<Order> orders = orderService.getOrdersByCustomer(customerId);
+        return ResponseEntity.ok(orders);
+    }
+    @GetMapping("/checkout")
+    public ResponseEntity<Order> orderChecout(@PathVariable Long cartId) throws IOException {
+        Order orders = orderService.checkout(cartId);
         return ResponseEntity.ok(orders);
     }
 //    @PutMapping("/update/{orderId}")

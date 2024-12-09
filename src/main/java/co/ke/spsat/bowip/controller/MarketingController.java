@@ -14,20 +14,20 @@ public class MarketingController {
 
     // Discount Codes and Coupons
     @PostMapping("/create-discount-codes")
-    public ResponseEntity<DiscountCode> createDiscountCode(@RequestBody DiscountCode discountCode) {
-        DiscountCode createdDiscountCode = marketingService.createDiscountCode(discountCode);
+    public ResponseEntity<Discount> createDiscountCode(@RequestBody Discount discountCode) {
+        Discount createdDiscountCode = marketingService.createDiscountCode(discountCode);
         return ResponseEntity.ok(createdDiscountCode);
     }
 
     @GetMapping("/discount-codes")
-    public ResponseEntity<List<DiscountCode>> getAllDiscountCodes() {
-        List<DiscountCode> discountCodes = marketingService.getAllDiscountCodes();
+    public ResponseEntity<List<Discount>> getAllDiscountCodes() {
+        List<Discount> discountCodes = marketingService.getAllDiscountCodes();
         return ResponseEntity.ok(discountCodes);
     }
 
     @PutMapping("/discount-codes/{id}")
-    public ResponseEntity<DiscountCode> updateDiscountCode(@PathVariable Long id, @RequestBody DiscountCode discountCodeDetails) {
-        DiscountCode updatedDiscountCode = marketingService.updateDiscountCode(id, discountCodeDetails);
+    public ResponseEntity<Discount> updateDiscountCode(@PathVariable Long id, @RequestBody Discount discountCodeDetails) {
+        Discount updatedDiscountCode = marketingService.updateDiscountCode(id, discountCodeDetails);
         return ResponseEntity.ok(updatedDiscountCode);
     }
 

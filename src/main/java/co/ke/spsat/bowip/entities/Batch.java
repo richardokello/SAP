@@ -5,7 +5,10 @@ import lombok.Data;
 
 import org.springframework.lang.NonNull;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
+
 @Table(name = "BATCH")
 @Data
 @Entity
@@ -24,15 +27,19 @@ public class Batch {
      private String batchNo;
 
     @Column(name = "MANUFACTURING_DATE")
-    private Date manufacturingDate;
+    private LocalDate manufacturingDate;
 
     @Column(name = "EXPIRATION_DATE")
-    private Date expirationDate;
+    private LocalDate expirationDate;
+    private int initialQuantity;
+    private int currentQuantity;
+    private String status;  // "available", "expired", "low_stock", "defective"
+    private String qualityStatus;  // "ok", "damaged", etc.
+    private Long quantity; // Total quantity in this batch
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "PRODUCT_ID")
-    private Products product;
-    private String productCode;
+   // @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+   @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL)
+   private List<Products> products;
     public Batch() {
 
 

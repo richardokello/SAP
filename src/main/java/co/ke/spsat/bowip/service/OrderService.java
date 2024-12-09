@@ -3,14 +3,19 @@ package co.ke.spsat.bowip.service;
 import co.ke.spsat.bowip.Exception.ResourceNotFoundException;
 import co.ke.spsat.bowip.dtos.OrderItemRequest;
 import co.ke.spsat.bowip.entities.*;
+import co.ke.spsat.bowip.payment.mpesa.MpesaIntegration;
 import co.ke.spsat.bowip.repositories.*;
 import co.ke.spsat.bowip.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,11 +28,18 @@ public class OrderService {
     private final ShoppingCartService shoppingCartService;
     private final ShoppingCartRepository shoppingCartRepository;
     private final StockRepository stockRepository;
+    private final MpesaIntegration mpesaIntegration;
+    private final CartItemRepository cartItemRepository;
+    private  final BatchRepository batchRepository;
+    private final DiscountRepository discountRepository;
 
     @Autowired
     private NotificationService notificationService;
 
-    public OrderService(OrderRepository orderRepository, ShoppingCartRepository shoppingCartRepository, UsersRepository usersRepository, CustomerRepository customerRepository, ProductsRepository productRepository, ShoppingCartService shoppingCartService, StockRepository stockRepository) {
+    @Autowired
+    private COGSService cogsService;
+
+    public OrderService(OrderRepository orderRepository, ShoppingCartRepository shoppingCartRepository, UsersRepository usersRepository, CustomerRepository customerRepository, ProductsRepository productRepository, ShoppingCartService shoppingCartService, StockRepository stockRepository, MpesaIntegration mpesaIntegration, CartItemRepository cartItemRepository, BatchRepository batchRepository, DiscountRepository discountRepository) {
         this.orderRepository = orderRepository;
         this.usersRepository=usersRepository;
         this.customerRepository = customerRepository;
@@ -35,14 +47,40 @@ public class OrderService {
         this.shoppingCartService = shoppingCartService;
         this.shoppingCartRepository = shoppingCartRepository;
         this.stockRepository = stockRepository;
+        this.mpesaIntegration = mpesaIntegration;
+        this.cartItemRepository = cartItemRepository;
+        this.batchRepository = batchRepository;
+        this.discountRepository = discountRepository;
     }
 
 
 
+//    public Order createOrder(Long customerId, Long userId, Long cartId) {
+//        Customers customer = customerRepository.findById(customerId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+//        Optional<Users> users = usersRepository.findByUserIdAndActivatedAndRolesIs(userId, AppConstants.ROLE_FIELD_USERS );
+//
+//        Order order = new Order();
+//        order.setCustomer(customer);
+//        order.setCreatedBy(users.get().getEmail());
+//        order.setOrderDate(LocalDateTime.now());
+//        order.setOrderStatus(OrderStatus.NEW);
+//
+//        List<OrderItemRequest> itemRequests = shoppingCartService.getCartItems(cartId).stream()
+//                .map(cartItem -> new OrderItemRequest(cartItem.getProducts().getProductId(),  cartItem.getQuantity()))
+//                .collect(Collectors.toList());
+//
+//        order.setOrderItems(createOrderItems(itemRequests));
+//        order.setOrderAmount(calculateTotalAmount(order.getOrderItems()));
+//        Order savedOrder= orderRepository.save(order);
+//        notificationService.sendOrderConfirmation(order.getCustomer().getBusinessEmail(), savedOrder);
+//     return savedOrder;
+//    }
+//TODO: TO WRITE LOGIC THAT HANDLES SUBSTRACTION OF PRODUCTS
     public Order createOrder(Long customerId, Long userId, Long cartId) {
         Customers customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-        Optional<Users> users = usersRepository.findByUserIdAndActivatedAndRolesIs(userId, AppConstants.ROLE_FIELD_USERS );
+        Optional<Users> users = usersRepository.findByUserIdAndActivatedAndRolesIs(userId, AppConstants.ROLE_FIELD_USERS);
 
         Order order = new Order();
         order.setCustomer(customer);
@@ -51,16 +89,27 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.NEW);
 
         List<OrderItemRequest> itemRequests = shoppingCartService.getCartItems(cartId).stream()
-                .map(cartItem -> new OrderItemRequest(cartItem.getProducts().getProductId(),  cartItem.getQuantity()))
+                .map(cartItem -> new OrderItemRequest(cartItem.getProducts().getProductId(), cartItem.getQuantity()))
                 .collect(Collectors.toList());
 
-        order.setOrderItems(createOrderItems(itemRequests));
-        order.setOrderAmount(calculateTotalAmount(order.getOrderItems()));
-        Order savedOrder= orderRepository.save(order);
-        notificationService.sendOrderConfirmation(order.getCustomer().getBusinessEmail(), savedOrder);
-     return savedOrder;
-    }
+        List<OrderItem> orderItems = createOrderItems(itemRequests);
+        order.setOrderItems(orderItems);
 
+        // Calculate total COGS for the order using FIFO
+        double totalCOGS = 0.0;
+        for (OrderItem item : orderItems) {
+            double productCOGS = cogsService.calculateCOGS(item.getProduct().getProductId(), item.getQuantity());
+            item.setCostOfGoodsSold(productCOGS);  // Set COGS for each order item
+            totalCOGS += productCOGS;  // Sum COGS for the order
+        }
+
+        order.setTotalCOGS(totalCOGS);  // Set total COGS for the order
+        order.setTotalOrderAmount(calculateTotalAmount(order.getOrderItems()));  // Calculate total amount
+
+        Order savedOrder = orderRepository.save(order);
+        notificationService.sendOrderConfirmation(order.getCustomer().getBusinessEmail(), savedOrder);
+        return savedOrder;
+    }
 
 
     public Order updateOrderStatus(Long orderId, OrderStatus status) {
@@ -83,20 +132,33 @@ public class OrderService {
                 .map(request -> {
                     Products product = productRepository.findById(request.getProductId())
                             .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
                     if (!isProductAvailable(product, request.getQuantity())) {
                         throw new IllegalArgumentException("Product not available in the requested quantity");
                     }
-
+                    if (request.getBatchNo()!=null){
+                       Batch batches= batchRepository.findByBatchNo(request.getBatchNo()).orElseThrow(() -> new ResourceNotFoundException("Batch with that Id not found"));
+                       if(batches.getQuantity()>request.getQuantity()&&batches.getExpirationDate().isBefore(LocalDate.now())){
+                           batches.setQuantity(batches.getQuantity()- request.getQuantity());
+                           batchRepository.save(batches);
+                       }
+                    }
                     OrderItem item = new OrderItem();
                     item.setProduct(product);
                     item.setQuantity(request.getQuantity());
-                    item.setTotalPrice(product.getSellingPrice()*(request.getQuantity()) );
+                    item.setTotalPrice(product.getSellingPrice().multiply(BigDecimal.valueOf(request.getQuantity())));
                     return item;
                 })
                 .collect(Collectors.toList());
     }
-
+private Discount applyDiscountToAnOrder(String discountCode, Long orderId)
+{
+ Discount discount= discountRepository.findByCode(discountCode).orElseThrow(()-> new ResourceNotFoundException("Discount code not found"));
+ Order order= orderRepository.findById(orderId).orElseThrow(()-> new ResourceNotFoundException("Order not found"));
+ BigDecimal discountedAmount= (order.getTotalOrderAmount().subtract (order.getTotalOrderAmount().multiply(discount.getDiscountPercentage())).divide(new BigDecimal(100), RoundingMode.HALF_UP));
+ order.setTotalOrderAmount(discountedAmount);
+ discountRepository.save(discount);
+ return discount;
+}
 
     private boolean isProductAvailable(Products product, Long quantity) {
         Stock stock=stockRepository.findById(product.getProductId())
@@ -105,8 +167,11 @@ public class OrderService {
       ///  return product.getQuantityInStock() >= quantity;
     }
 
-    private double calculateTotalAmount(List<OrderItem> items) {
-        return items.stream().mapToDouble(item -> item.getTotalPrice() * item.getQuantity()).sum();
+    private BigDecimal calculateTotalAmount(List<OrderItem> items) {
+        return  items.stream()
+                .map(item -> item.getUnitPrice()
+                .multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 //    private BigDecimal calculateOrderTotalAmount(List<OrderItem> orderItems) {
@@ -133,43 +198,56 @@ public class OrderService {
     }
 
     public Order addItemsToOrder(Long orderId, List<OrderItemRequest> itemRequests) {
+      //  Batch batch = batchRepository.findById(batchId);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         List<OrderItem> items = createOrderItems(itemRequests);
-      //  order.getOrderItems().addAll(items);
+       // order.getOrderItems().addAll(items);
         order.setOrderItems(items);
-        order.setOrderAmount(calculateTotalAmount(order.getOrderItems()));
-        return orderRepository.save(order);
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setTotalOrderAmount(calculateTotalAmount(order.getOrderItems()));
+        return order;//orderRepository.save(order);
     }
+//Method that handles payment of orders.
 
-
-    public Order checkout(Long cartId) {
+    public Order checkout(Long cartId) throws IOException {
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
-
         Order order = new Order();
         order.setShoppingCart(cart);
         order.setOrderDate(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.PENDING);
-
-        Double taxAmount = calculateTax(cart);
+        BigDecimal taxAmount = calculateTax(cart);
         order.setTaxAmount(taxAmount);
+        order.setOrderStatus(OrderStatus.PENDING);
+     //   order.setProducts(cart.getCartItems().);
+        order.setTotalOrderAmount(calculateTotalAmount(order.getOrderItems()));
+        try {
+            mpesaIntegration.processMpesaSTKPush(order.getCustomer().getBusinessPrimaryContactNo(), order.getTotalOrderAmount() );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+            order.setOrderStatus(OrderStatus.COMPLETED);
+            clearCart(cartId);
+            // Additional checkout logic (e.g., payment processing, stock deduction) can be added here
 
-        // Additional checkout logic (e.g., payment processing, stock deduction) can be added here
+            return orderRepository.save(order);
 
-        return orderRepository.save(order);
+    }
+    public void clearCart(Long cartId) {
+        ShoppingCart cart = shoppingCartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart not found"));
+        cartItemRepository.deleteAll(cart.getCartItems());
     }
 
-    private Double calculateTax(ShoppingCart cart) {
+    private BigDecimal calculateTax(ShoppingCart cart) {
         // Example tax calculation logic
-        Double taxRate = Double.valueOf("0.16"); // 10% tax rate
-        return cart.getTotalAmount()*(taxRate);
+       BigDecimal taxRate = new BigDecimal("0.16"); // 10% tax rate
+        return cart.getTotalAmount().multiply(taxRate);
     }
     public Order removeItemsFromOrder(Long orderId, List<Long> itemIds) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         order.getOrderItems().removeIf(item -> itemIds.contains(item.getItemId()));
-        order.setOrderAmount(calculateTotalAmount(order.getOrderItems()));
+        order.setTotalOrderAmount(calculateTotalAmount(order.getOrderItems()));
         return orderRepository.save(order);
     }
 
@@ -182,10 +260,10 @@ public class OrderService {
                     throw new IllegalArgumentException("Product not available in the requested quantity");
                 }
                 item.setQuantity(quantity);
-                item.setTotalPrice(item.getProduct().getPrice() * quantity);
+                item.setTotalPrice(item.getProduct().getPrice().multiply(BigDecimal.valueOf(quantity)) );
             }
         });
-        order.setOrderAmount(calculateTotalAmount(order.getOrderItems()));
+        order.setTotalOrderAmount(calculateTotalAmount(order.getOrderItems()));
         return orderRepository.save(order);
     }
     public Order fulfillOrder(Long orderId) {
@@ -203,11 +281,12 @@ public class OrderService {
             OrderItem orderItem = orderItemOptional.get();
             if (orderItem.getQuantity() >= quantity) {
                 orderItem.setQuantity(orderItem.getQuantity() - quantity);
-                orderItem.setTotalPrice(orderItem.getUnitPrice()*(orderItem.getQuantity()));
+                orderItem.setTotalPrice(orderItem.getUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
                 if (orderItem.getQuantity() == 0) {
                     order.getOrderItems().remove(orderItem);
                 }
-                order.setOrderAmount(calculateTotalAmount(order.getOrderItems()));
+                order.setProducts(orderItem.getOrder().getProducts());
+                order.setTotalOrderAmount(calculateTotalAmount(order.getOrderItems()));
                 return orderRepository.save(order);
             } else {
                 throw new IllegalArgumentException("Quantity to return exceeds quantity in order");

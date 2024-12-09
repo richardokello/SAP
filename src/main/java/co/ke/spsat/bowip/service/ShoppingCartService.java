@@ -32,7 +32,7 @@ public class ShoppingCartService {
         cart.setCustomer(customer);
         cart.setCreationDate(LocalDateTime.now());
         cart.setActive(true);
-        cart.setTotalAmount(Double.valueOf(0));
+        cart.setTotalAmount(new BigDecimal(0));
 
         return shoppingCartRepository.save(cart);
     }
@@ -51,20 +51,21 @@ public class ShoppingCartService {
 //        if (product.getQuantityInStock() < quantity) {
 //            throw new IllegalArgumentException("Product not available in the requested quantity");
 //        }
+
         Optional<CartItem> existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getProducts().getProductId().equals(productId))
                 .findFirst();
 
-        if (existingItem.isPresent()) {
+        if (existingItem.isPresent()){
             CartItem item = existingItem.get();
             item.setQuantity(item.getQuantity() + quantity);
-            item.setItemPriceAmount(item.getItemPriceAmount()+(product.getSellingPrice()*(quantity)));
+            item.setItemPriceAmount(item.getItemPriceAmount().add(product.getSellingPrice().multiply(BigDecimal.valueOf(quantity))));
             cartItemRepository.save(item);
         } else {
             CartItem newItem = new CartItem();
             newItem.setProducts(product);
             newItem.setQuantity(quantity);
-            newItem.setItemPriceAmount(product.getSellingPrice()*quantity);
+            newItem.setItemPriceAmount(product.getSellingPrice().multiply(BigDecimal.valueOf(quantity)));
             newItem.setCart(cart);
             cart.getCartItems().add(newItem);
             cartItemRepository.save(newItem);
@@ -103,7 +104,7 @@ public class ShoppingCartService {
         if (existingItem.isPresent()) {
             CartItem item = existingItem.get();
             item.setQuantity(quantity);
-            item.setItemPriceAmount(product.getSellingPrice()*(quantity));
+            item.setItemPriceAmount(product.getSellingPrice().multiply(BigDecimal.valueOf(quantity)));
             cartItemRepository.save(item);
         }
 
@@ -112,11 +113,11 @@ public class ShoppingCartService {
     }
 
     private void updateCartTotal(ShoppingCart cart) {
-        Double total = cart.getCartItems().stream()
+        BigDecimal total = cart.getCartItems().stream()
                 .map(CartItem::getItemPriceAmount)
-                .reduce((double) 0, Double::sum);
-
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         cart.setTotalAmount(total);
+
     }
     public List<CartItem> getCartItems(Long cartId) {
         ShoppingCart cart = shoppingCartRepository.findById(cartId)

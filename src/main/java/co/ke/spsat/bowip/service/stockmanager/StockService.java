@@ -45,6 +45,7 @@ public class StockService {
 
         Stock stock = new Stock();
 
+
         Optional<Stock> stockOpt = stockRepository.findByProductIdAndWarehouseId(product, warehouse);
 
         if (stockOpt.isPresent()) {
@@ -57,6 +58,8 @@ public class StockService {
         stock.setLastUpdated(new Date());
         stock.setUnitPrice(stockRequest.getUnitPrice());
         stock.setReorderPoint(stockRequest.getReorderPoint());
+        stock.setQuantityOnHand(stockRequest.getQuantityOnHand());
+        stock.setProductId(product);
         return stockRepository.save(stock);
     }
 
@@ -105,7 +108,7 @@ public class StockService {
 
     // Transfer Stock
     public Stock transferStock(StockTransferRequest stockRequest, Long quantity, Long userId) {
-        removeStock(stockRequest.getToWarehouseId().getWarehouseID(), stockRequest.getFromWarehouseId().getWarehouseID(), (Long) quantity, userId, "Transfer to warehouse " + stockRequest.getToWarehouseId().getWarehouseName());
+        removeStock(stockRequest.getToWarehouseId().getWarehouseID(), stockRequest.getFromWarehouseId().getWarehouseID(), quantity, userId, "Transfer to warehouse " + stockRequest.getToWarehouseId().getWarehouseName());
         StockDTO stockDTO=new StockDTO();
         stockDTO.setProductId(stockRequest.getProductId().getProductId());
         stockDTO.setWarehouseId(stockRequest.getToWarehouseId().getWarehouseID());

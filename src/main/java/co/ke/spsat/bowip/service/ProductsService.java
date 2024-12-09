@@ -1,36 +1,37 @@
 package co.ke.spsat.bowip.service;
 
+import co.ke.spsat.bowip.Exception.ResourceNotFoundException;
 import co.ke.spsat.bowip.dtos.BatchRequest;
 import co.ke.spsat.bowip.dtos.ProductRequest;
 import co.ke.spsat.bowip.dtos.ProductResponse;
 import co.ke.spsat.bowip.dtos.SupplierDTO;
 import co.ke.spsat.bowip.entities.*;
-import co.ke.spsat.bowip.repositories.BatchRepository;
-import co.ke.spsat.bowip.repositories.ProductCategoryRepository;
-import co.ke.spsat.bowip.repositories.ProductsRepository;
-import co.ke.spsat.bowip.repositories.SupplierRepository;
+import co.ke.spsat.bowip.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ProductsService {
     @Autowired
-private ProductsRepository productsRepository;
+    private ProductsRepository productsRepository;
     @Autowired
     private BatchRepository batchRepository;
-
-  @Autowired
-private ProductCategoryRepository productCategoryRepository;
+    @Autowired
+    private ProductCategoryRepository productCategoryRepository;
     @Autowired
     private SupplierRepository supplierRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
 public ProductResponse createProducts(ProductRequest productDTO){
 
@@ -64,21 +65,22 @@ public ProductResponse createProducts(ProductRequest productDTO){
         supplierRepository.save(supplier);
     products.setSupplier(supplier);
     }
+    Batch batch=new Batch();
     if(productDTO.getBatchRequests()!=null){
-        List<Batch> batchList=new ArrayList<>();
-        for (BatchRequest batchRequest: productDTO.getBatchRequests()){
-            Batch batch=new Batch();
-            batch.setProduct(products);
+
+        BatchRequest batchRequest= productDTO.getBatchRequests();
+
+         //   batch.setProduct(products);
           //  batch.setBatchId(batchRequest.getBatchId());
-            //batch.ser(batchRequest.getBatchName());
+            //batch.set(batchRequest.getBatchName());
             batch.setExpirationDate(batchRequest.getExpiryDate());
             batch.setBatchNo(batchRequest.getBatchNo());
             batch.setManufacturingDate(batchRequest.getManufacturingDate());
-            batchList.add(batch);
+
         }
-        products.setBatches(batchList);
-        batchRepository.saveAll(batchList);
-    }
+        products.setBatches(batch);
+        batchRepository.save(batch );
+
 
     productsRepository.save(products);
 ProductResponse response=new ProductResponse();
@@ -126,8 +128,8 @@ response.setMessage(productDTO.getProductName() + " created successfully");
             // ... other fields
 
             // Map batches to BatchDTO
-            List<BatchRequest> batchDTOList = new ArrayList<>();
-            for (Batch batch : products.getBatches()) {
+            //List<BatchRequest> batchDTOList = new ArrayList<>();
+            Batch batch = products.getBatches();
                 BatchRequest batchDTO = new BatchRequest();
                 batchDTO.setBatchId(batch.getBatchId());
               //  batchDTO.setBatchName(batch.getBatchName());
@@ -135,9 +137,9 @@ response.setMessage(productDTO.getProductName() + " created successfully");
                 batchDTO.setExpiryDate(batch.getExpirationDate());
                 batchDTO.setManufacturingDate(batch.getManufacturingDate());
                 // ... other fields
-                batchDTOList.add(batchDTO);
-            }
-            productDTO.setBatchRequests(batchDTOList);
+
+
+            productDTO.setBatchRequests(batchDTO);
             // Map supplier to SupplierDTO
             Supplier supplier = products.getSupplier();
             if (supplier != null) {
@@ -160,6 +162,15 @@ response.setMessage(productDTO.getProductName() + " created successfully");
 
       return productsRepository.findByBatchId(Id);
     }
+   public  ProductResponse setDiscount(Discount discount, Long productId){
+    Products products = productsRepository.findById(productId).orElseThrow(()-> new ResourceNotFoundException("Product not found"));
+    products.setDiscount(discount);
+    productsRepository.save(products);
+    ProductResponse response=new ProductResponse();
+    response.setResponseCode("00");
+    response.setMessage(products.getProductName() + " updated successfully");
+    return response;
+    }
 
     public Products getProductById(Long productId){
         Optional<Products> products=productsRepository.findById(productId);
@@ -168,6 +179,18 @@ response.setMessage(productDTO.getProductName() + " created successfully");
         return products.get();
 
     }
+    public List<ProductPerformanceDto> getTopSellingProducts(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Order> orderItems = orderRepository.findByOrderDateBetweenAndOrderStatus(startDate, endDate,OrderStatus.COMPLETED);
+        Map<Products, Long> productSalesMap = new HashMap<>();
 
+        for (Order item : orderItems) {
+            productSalesMap.put((Products) item.getOrderItems(),  productSalesMap.getOrDefault(item.getOrderItems().get(0).getProduct(), 0L) );
+        }
+
+        return productSalesMap.entrySet().stream()
+                .sorted(Map.Entry.<Products, Long>comparingByValue().reversed())
+                .map(entry -> new ProductPerformanceDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
 
 }

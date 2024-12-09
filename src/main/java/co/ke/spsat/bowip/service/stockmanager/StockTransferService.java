@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,16 +33,19 @@ private InventoryAlertRepository inventoryAlertRepository;
     @Autowired
     private UsersRepository userRepository;
 
-
+@Transactional
     public StockTransferRequest createTransferRequest(StockTransferRequest request, Integer requesterId) {
         StockTransfer transfer = new StockTransfer();
         Users requester = userRepository.findById(requesterId)
-                .orElseThrow(() -> new ResourceNotFoundException("Requester not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User making request not found"));
 
         transfer.setRequestedBy(requester);
         transfer.setStatus("PENDING");
         transfer.setRequestDate(new Date());
-
+        transfer.setRequested_by_id(request.getRequestedBy());
+        transfer.setFromWarehouseId(request.getFromWarehouseId());
+        transfer.setToWarehouseId(request.getToWarehouseId());
+        transfer.setProducts(request.getProductId().getProductCode());
         stockTransferRequestRepository.save(transfer);
         return request;
     }
@@ -67,7 +71,13 @@ private InventoryAlertRepository inventoryAlertRepository;
       stockTransferRequestRepository.save(request);
       return request1;
     }
-
+public Long availableStock(StockTransferRequest transferRequest){
+    // Retrieve stock at source warehouse
+    Stock sourceStock = stockRepository.findByProductIdAndWarehouseId(
+                    transferRequest.getProductId(), transferRequest.getFromWarehouseId())
+            .orElseThrow(() -> new ResourceNotFoundException("Stock not found in source warehouse"));
+return sourceStock.getQuantityOnHand();
+}
     public void processStockTransfer(StockTransferRequest transferRequest) {
         Warehouse sourceWarehouse = warehouseRepository.findById(transferRequest.getFromWarehouseId().getWarehouseID())
                 .orElseThrow(() -> new ResourceNotFoundException("Source warehouse not found"));
@@ -95,11 +105,13 @@ private InventoryAlertRepository inventoryAlertRepository;
                         transferRequest.getProductId(), transferRequest.getToWarehouseId())
                 .orElse(new Stock());
         // If not, create a new stock entry
-
-        if (destinationStock.getStockId().isEmpty()) {
+        destinationStock.setSourceWarehouseId(sourceWarehouse.getWarehouseID());
+        if (destinationStock.getStockId().toString().isEmpty()) {
             destinationStock.setProductId(sourceStock.getProductId());
             destinationStock.setWarehouseId(destinationWarehouse);
             destinationStock.setQuantityOnHand(0L);
+            destinationStock.setLastUpdated(new Date());
+
         }
         // Increase stock in destination warehouse
         destinationStock.setQuantityOnHand(destinationStock.getQuantityOnHand() + transferRequest.getQuantity());
@@ -138,16 +150,23 @@ private InventoryAlertRepository inventoryAlertRepository;
         return warehouseRepository.findAll();
     }
 
+
     // Inventory Alerts
-    private void createInventoryAlert(Stock stock) {
+    private void createInventoryAlert(Long stockId) {
+    Optional<Stock> stocks=stockRepository.findById(stockId);
+    if (stocks.isPresent()) {
+        Stock stock=stocks.get();
         InventoryAlert alert = new InventoryAlert();
         alert.setProduct(stock.getProductId());
         alert.setWarehouse(stock.getWarehouseId());
-        alert.setMessage("Stock level below reorder level");
+        alert.setMessage("Stock level below reorder level of inventory");
         alert.setAlertDate(new Date());
+
 
         inventoryAlertRepository.save(alert);
     }
+}
+
     public Stock updateStockLevel(Long stockId, Long quantity) {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new RuntimeException("Stock not found"));
@@ -156,7 +175,7 @@ private InventoryAlertRepository inventoryAlertRepository;
 
         // Check if quantity is below reorder level and create an alert
         if (quantity < stock.getReorderPoint()) {
-            createInventoryAlert(stock);
+            createInventoryAlert(stock.getStockId());
         }
 
         return stockRepository.save(stock);
